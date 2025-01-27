@@ -1,4 +1,7 @@
+// src/app/treehole/page.tsx
+
 'use client';
+
 import { useState, useEffect } from 'react';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
 import { saveMemory, getUserMemories } from '@/utils/supabase';
@@ -6,10 +9,11 @@ import TreeScene from '@/components/TreeScene';
 import { useUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { Message } from '@/types/memory';
 
 export default function TreeHole() {
   const { user, isLoaded } = useUser();
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { isRecording, startRecording, stopRecording, transcript, volume } = useVoiceRecorder();
 
@@ -30,11 +34,11 @@ export default function TreeHole() {
 
         // 格式化消息
         const formattedMessages = memories.map(memory => ({
-          id: memory.id,
+          id: String(memory.id),
           type: 'user',
           audioUrl: memory.audio_url,
           content: memory.transcript,
-          aiResponse: memory.ai_response,
+          aiResponse: memory.ai_response ?? '',
           timestamp: memory.created_at
         }));
 

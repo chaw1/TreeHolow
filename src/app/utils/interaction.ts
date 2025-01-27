@@ -1,5 +1,5 @@
 import { idle, superFull } from "@/components/tamagotchiFrames";
-import { PromptTemplate } from "langchain/prompts";
+import { PromptTemplate } from "@langchain/core/prompts";
 import { LLMChain } from "langchain/chains";
 import MemoryManager from "./memory";
 import StateManager from "./state";

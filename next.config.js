@@ -1,37 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverActions: true,
-    serverComponentsExternalPackages: ["sharp", "onnxruntime-node"],
+    serverComponentsExternalPackages: ['@prisma/client']
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-        port: "",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "tjzk.replicate.delivery",
-        port: "",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "replicate.delivery",
-        port: "",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "a16z.com",
-        port: "",
-        pathname: "**",
-      },
-    ],
-  },
-};
-
-module.exports = nextConfig;
+  webpack: (config) => {
+    config.externals.push({
+      'utf-8-validate': 'commonjs utf-8-validate',
+      'bufferutil': 'commonjs bufferutil',
+    })
+    return config
+  }
+}

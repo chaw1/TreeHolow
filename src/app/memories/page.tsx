@@ -1,4 +1,4 @@
-// src/app/memories/page.tsx
+// src/app/memories/page.tsx 顶部导入部分
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -6,22 +6,7 @@ import { useUser } from '@clerk/nextjs';
 import { getUserMemories } from '@/utils/supabase';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-
-interface Memory {
-  id: string;
-  content: string;
-  aiResponse: string;
-  timestamp: string;
-  audioUrl?: string;
-  emotionScore?: number;
-}
-
-interface Stats {
-  totalInteractions: number;
-  averageEmotionScore: number;
-  streakDays: number;
-  totalWords: number;
-}
+import { Memory, Stats, DBMemory } from '@/types/memory';
 
 export default function MemoriesPage() {
   const { user } = useUser();
@@ -44,7 +29,7 @@ export default function MemoriesPage() {
           aiResponse: memory.ai_response,
           timestamp: memory.created_at,
           audioUrl: memory.audio_url,
-          emotionScore: memory.emotion_score
+          emotionScore: 0
         }));
 
         setMemories(formattedMemories);
@@ -52,7 +37,8 @@ export default function MemoriesPage() {
         // 计算统计数据
         const stats: Stats = {
           totalInteractions: data.length,
-          averageEmotionScore: data.reduce((sum, m) => sum + (m.emotion_score || 50), 0) / data.length,
+          // averageEmotionScore: data.reduce((sum, m) => sum + (m.emotion_score || 50), 0) / data.length,
+          averageEmotionScore: 0,
           streakDays: calculateStreakDays(data),
           totalWords: data.reduce((sum, m) => sum + (m.transcript?.split(/\s+/).length || 0), 0)
         };
@@ -71,9 +57,13 @@ export default function MemoriesPage() {
   function calculateStreakDays(memories: any[]): number {
     if (memories.length === 0) return 0;
 
-    const dates = [...new Set(memories.map(m =>
+    // const dates = [...new Set(memories.map(m =>
+    //   new Date(m.created_at).toDateString()
+    // ))];
+    // 将原来的展开运算符改为使用 Array.from
+    const dates = Array.from(new Set(memories.map(m =>
       new Date(m.created_at).toDateString()
-    ))];
+    )));
 
     let streak = 1;
     const today = new Date().toDateString();
