@@ -1,4 +1,6 @@
 // src/app/api/chat/route.ts
+
+
 import { NextResponse } from "next/server";
 import { getModel } from "@/app/utils/model";
 
@@ -14,6 +16,8 @@ const SYSTEM_PROMPT = `你是一个温暖的心理支持专家，正在通过3D�
   "suggested_activity": "推荐一个治愈系小活动",
   "emotional_score": 0-100的情绪值
 }`;
+
+export const runtime = 'nodejs'; // 设置为 nodejs runtime
 
 export async function POST(req: Request) {
   try {
