@@ -12,13 +12,13 @@ interface TreeSceneProps {
   messages: Memory[]; // 修改为 Memory[]
 }
 
-
 interface MemoryFruitProps {
   memory: Memory;
   position: [number, number, number];
   onClick: () => void;
 }
 
+// 创建默认纹理函数
 function createDefaultTexture(color: string = '#4a4a4a'): THREE.Texture {
   const canvas = document.createElement('canvas');
   canvas.width = 256;
@@ -35,11 +35,14 @@ function createDefaultTexture(color: string = '#4a4a4a'): THREE.Texture {
 
 function MemoryFruit({ memory, position, onClick }: MemoryFruitProps) {
   const [hovered, setHovered] = useState(false);
-  const meshRef = useRef<THREE.Group>(null!);
+  const groupRef = useRef<THREE.Group>(null!);
+  const fruitMeshRef = useRef<THREE.Mesh>(null!);
+  const lightRef = useRef<THREE.PointLight>(null!);
+
   const defaultLeafTexture = useMemo(() => createDefaultTexture('#4CAF50'), []);
   const leafTexture = useMemo(() => {
     try {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       return useLoader(THREE.TextureLoader, '/textures/leaf_alpha.png');
     } catch {
       return defaultLeafTexture;
@@ -47,23 +50,37 @@ function MemoryFruit({ memory, position, onClick }: MemoryFruitProps) {
   }, [defaultLeafTexture]);
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.02;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+    const elapsed = state.clock.elapsedTime;
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.02;
+      groupRef.current.position.y = position[1] + Math.sin(elapsed * 2) * 0.1;
+    }
+    if (fruitMeshRef.current) {
+      // 基础缩放：悬停时更大，不悬停时正常大小
+      const baseScale = hovered ? 1.4 : 1;
+      // 脉动效果
+      const pulsate = 0.05 * Math.sin(elapsed * 3);
+      fruitMeshRef.current.scale.set(baseScale + pulsate, baseScale + pulsate, baseScale + pulsate);
+    }
+    if (lightRef.current) {
+      // 根据悬停状态动态调整光源强度，并添加轻微脉动
+      const baseIntensity = hovered ? 2 : 0.8;
+      const pulsateIntensity = 0.3 * Math.sin(elapsed * 3);
+      lightRef.current.intensity = baseIntensity + pulsateIntensity;
     }
   });
 
   return (
-    <group ref={meshRef} position={position}>
+    <group ref={groupRef} position={position}>
       <pointLight
+        ref={lightRef}
         position={[0, 0, 0]}
         color={hovered ? "#FFE08C" : "#FFFFFF"}
-        intensity={hovered ? 2 : 0.8}
         distance={1.5}
       />
 
       <mesh
-        scale={hovered ? 1.4 : 1}
+        ref={fruitMeshRef}
         onClick={onClick}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
@@ -82,7 +99,7 @@ function MemoryFruit({ memory, position, onClick }: MemoryFruitProps) {
 
       <mesh
         position={[0.25, 0.35, 0]}
-        rotation={[0, 0, Math.PI/3]}
+        rotation={[0, 0, Math.PI / 3]}
         scale={hovered ? 1.2 : 1}
       >
         <planeGeometry args={[0.25, 0.5]} />
@@ -127,11 +144,11 @@ function MemoryFruit({ memory, position, onClick }: MemoryFruitProps) {
   );
 }
 
-function Tree({ memories, onMemoryClick }: { memories: Memory[], onMemoryClick: (memory: Memory) => void }) {
+function Tree({ memories, onMemoryClick }: { memories: Memory[]; onMemoryClick: (memory: Memory) => void }) {
   const defaultTrunkTexture = useMemo(() => createDefaultTexture('#8B4513'), []);
   const trunkTexture = useMemo(() => {
     try {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       return useLoader(THREE.TextureLoader, '/textures/tree_trunk.jpg');
     } catch {
       return defaultTrunkTexture;
@@ -207,7 +224,7 @@ function Tree({ memories, onMemoryClick }: { memories: Memory[], onMemoryClick: 
         );
       })}
 
-      <mesh rotation={[-Math.PI/2, 0, 0]} position={[0, -1.2, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.2, 0]} receiveShadow>
         <circleGeometry args={[15, 64]} />
         <meshStandardMaterial color="#3A5F3E" roughness={0.8} metalness={0.2} />
       </mesh>
@@ -215,7 +232,7 @@ function Tree({ memories, onMemoryClick }: { memories: Memory[], onMemoryClick: 
   );
 }
 
-function MemoryDetail({ memory, onClose }: { memory: Memory | null, onClose: () => void }) {
+function MemoryDetail({ memory, onClose }: { memory: Memory | null; onClose: () => void }) {
   if (!memory) return null;
 
   return (
@@ -247,34 +264,75 @@ function MemoryDetail({ memory, onClose }: { memory: Memory | null, onClose: () 
   );
 }
 
+// 新增组件：魔法尘粒效果
+function MagicalDust() {
+  const groupRef = useRef<THREE.Group>(null!);
+  const particlesCount = 500;
+  const positions = useMemo(() => {
+    const positions = new Float32Array(particlesCount * 3);
+    for (let i = 0; i < particlesCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 20;      // x: -10 ~ 10
+      positions[i * 3 + 1] = Math.random() * 10;            // y: 0 ~ 10
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;      // z: -10 ~ 10
+    }
+    return positions;
+  }, [particlesCount]);
+
+  useFrame((_, delta) => {
+    // 缓慢旋转尘粒系统
+    groupRef.current.rotation.y += delta * 0.1;
+  });
+
+  return (
+    <group ref={groupRef}>
+      <points>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={positions.length / 3}
+            array={positions}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          color="#ffffff"
+          size={0.1}
+          transparent
+          opacity={0.6}
+          sizeAttenuation
+        />
+      </points>
+    </group>
+  );
+}
+
 function Scene({ messages }: { messages: Memory[] }) {
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
 
-  // @ts-ignore
-    // @ts-ignore
-    return (
+  return (
     <>
-        <Canvas
-          shadows
-          camera={{ position: [0, 5, 12], fov: 55 }}
-          gl={{ antialias: true, alpha: true }}
-          style={{ background: 'linear-gradient(180deg, #87CEEB 0%, #E0F7FA 100%)' }}
-        >
-          <Suspense fallback={null}>
-            <EffectComposer multisampling={8}>
-              <SSAO
-                samples={31}
-                radius={0.1}
-                intensity={20}
-                luminanceInfluence={0.6}
-                worldDistanceThreshold={100}       // 新增属性
-                worldDistanceFalloff={1.0}         // 新增属性
-                worldProximityThreshold={1.0}      // 新增属性
-                worldProximityFalloff={1.0}        // 新增属性
-              />
-              <Bloom intensity={0.5} luminanceThreshold={0.8} luminanceSmoothing={0.9} height={300} />
-              <DepthOfField focusDistance={0.02} focalLength={0.05} bokehScale={3} />
-            </EffectComposer>
+      <Canvas
+        shadows
+        camera={{ position: [0, 5, 12], fov: 55 }}
+        gl={{ antialias: true, alpha: true }}
+        // 将背景设置为透明，背景动画由外层容器 CSS 控制
+        style={{ background: 'transparent' }}
+      >
+        <Suspense fallback={null}>
+          <EffectComposer multisampling={8}>
+            <SSAO
+              samples={31}
+              radius={0.1}
+              intensity={20}
+              luminanceInfluence={0.6}
+              worldDistanceThreshold={100}
+              worldDistanceFalloff={1.0}
+              worldProximityThreshold={1.0}
+              worldProximityFalloff={1.0}
+            />
+            <Bloom intensity={0.5} luminanceThreshold={0.8} luminanceSmoothing={0.9} height={300} />
+            <DepthOfField focusDistance={0.02} focalLength={0.05} bokehScale={3} />
+          </EffectComposer>
 
           <ambientLight intensity={0.4} color="#FFEEDD" />
           <directionalLight
@@ -290,11 +348,15 @@ function Scene({ messages }: { messages: Memory[] }) {
           <Stars radius={500} depth={100} count={5000} factor={4} />
 
           <Tree memories={messages} onMemoryClick={setSelectedMemory} />
+          {/* 添加魔法尘粒效果 */}
+          <MagicalDust />
           <OrbitControls
             enableZoom={true}
             minDistance={8}
             maxDistance={20}
             enablePan={false}
+            enableDamping
+            dampingFactor={0.1}
           />
         </Suspense>
       </Canvas>
@@ -308,7 +370,8 @@ function Scene({ messages }: { messages: Memory[] }) {
 
 export default function TreeScene({ messages }: TreeSceneProps) {
   return (
-    <div className="relative h-screen w-full">
+    // 外层容器添加 CSS 类 animate-bg 用于背景渐变动画
+    <div className="relative h-screen w-full animate-bg">
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-full">

@@ -76,11 +76,6 @@ class MemoryManager {
     return MemoryManager.instance;
   }
 
-  public async writeToHistory(text: string) {}
-
-  public async readLatestHistory() {}
-
-  public async seedChatHistory() {}
 }
 
 export default MemoryManager;
