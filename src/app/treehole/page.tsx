@@ -57,47 +57,56 @@ export default function TreeHole() {
     if (!user) return;
 
     if (!isRecording) {
-      await startRecording();
-    } else {
-      const { audioBlob, text } = await stopRecording();
-      setIsLoading(true);
-
       try {
-        // 获取AI回复
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'chat',
-            message: text
-          })
-        });
-
-        const data = await response.json();
-
-        // 保存到用户的记忆中
-        const savedMemory = await saveMemory(
-          user.id,
-          audioBlob,
-          text,
-          data.text
-        );
-
-        // 更新UI
-        setMessages(prev => [
-          ...prev,
-          {
-            id: savedMemory.id,
-            type: 'user',
-            audioUrl: savedMemory.audio_url,
-            content: savedMemory.transcript,
-            aiResponse: savedMemory.ai_response,
-            timestamp: savedMemory.created_at
-          }
-        ]);
+        await startRecording();
       } catch (error) {
-        console.error('Error:', error);
-      } finally {
+        console.error('Error starting recording:', error);
+      }
+    } else {
+      try {
+        const { audioBlob, text } = await stopRecording();
+        setIsLoading(true);
+
+        try {
+          // 获取AI回复
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'chat',
+              message: text
+            })
+          });
+
+          const data = await response.json();
+
+          // 保存到用户的记忆中
+          const savedMemory = await saveMemory(
+            user.id,
+            audioBlob,
+            text,
+            data.text
+          );
+
+          // 更新UI
+          setMessages(prev => [
+            ...prev,
+            {
+              id: savedMemory.id,
+              type: 'user',
+              audioUrl: savedMemory.audio_url,
+              content: savedMemory.transcript,
+              aiResponse: savedMemory.ai_response,
+              timestamp: savedMemory.created_at
+            }
+          ]);
+        } catch (error) {
+          console.error('Error processing speech:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error in recording process:', error);
         setIsLoading(false);
       }
     }

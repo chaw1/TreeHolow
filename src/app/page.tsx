@@ -25,9 +25,9 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 overflow-y-auto relative">
       {/* 波浪背景 */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 1440 320">
           <path
             fill="#E8F4FF"

@@ -39,9 +39,15 @@ export const useVoiceRecorder = () => {
       recognition.interimResults = true;
 
       recognition.onresult = (event: any) => {
-        const current = event.resultIndex;
-        const transcript = event.results[current][0].transcript;
-        setTranscript(transcript);
+        try {
+          const current = event.resultIndex;
+          if (event.results[current] && event.results[current][0]) {
+            const transcript = event.results[current][0].transcript;
+            setTranscript(transcript);
+          }
+        } catch (err) {
+          console.error('Error processing speech recognition result:', err);
+        }
       };
 
       // 5. 初始化录音器
