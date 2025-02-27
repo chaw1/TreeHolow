@@ -26,6 +26,7 @@ export const zh = {
     home: "首页",
     treehole: "树洞空间",
     memories: "我的记忆",
+    achievements: "成就系统",
     settings: "设置",
     profile: "个人资料",
     login: "登录",
@@ -115,6 +116,35 @@ export const zh = {
       words: "分享文字",
       emotions: "平均情绪值",
       achievements: "成长足迹"
+    }
+  },
+  
+  // 成就和积分系统
+  achievements: {
+    title: "成就系统",
+    subtitle: "记录成长足迹，收集特殊徽章",
+    progress: "成就进度",
+    unlocked: "解锁成就",
+    completion: "完成度",
+    points: {
+      title: "我的积分",
+      current: "当前积分",
+      description: "解锁成就和每日签到可以获得积分",
+      future: "未来可用于兑换特殊主题和功能"
+    },
+    checkIn: {
+      title: "每日签到",
+      streak: "连续签到",
+      button: "立即签到",
+      done: "今日已签到",
+      tomorrow: "明天再来签到获取更多积分吧!",
+      consecutive: "连续签到可获得更多积分奖励!"
+    },
+    categories: {
+      interaction: "互动成就",
+      emotion: "情绪成就",
+      streak: "连续成就",
+      special: "特殊成就"
     }
   },
 

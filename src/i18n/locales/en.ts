@@ -26,6 +26,7 @@ export const en = {
     home: "Home",
     treehole: "Tree Hollow",
     memories: "My Memories",
+    achievements: "Achievements",
     settings: "Settings",
     profile: "Profile",
     login: "Login",
@@ -115,6 +116,35 @@ export const en = {
       words: "Words Shared",
       emotions: "Average Emotion",
       achievements: "Growth Footprints"
+    }
+  },
+  
+  // 成就和积分系统
+  achievements: {
+    title: "Achievements",
+    subtitle: "Record growth milestones, collect special badges",
+    progress: "Achievement Progress",
+    unlocked: "Unlocked",
+    completion: "Completion",
+    points: {
+      title: "My Points",
+      current: "Current Points",
+      description: "Unlock achievements and daily check-ins to earn points",
+      future: "Will be used to redeem special themes and features in the future"
+    },
+    checkIn: {
+      title: "Daily Check-in",
+      streak: "Consecutive Days",
+      button: "Check in Now",
+      done: "Already Checked in Today",
+      tomorrow: "Come back tomorrow for more points!",
+      consecutive: "Consecutive check-ins earn more bonus points!"
+    },
+    categories: {
+      interaction: "Interaction Achievements",
+      emotion: "Emotion Achievements",
+      streak: "Streak Achievements",
+      special: "Special Achievements"
     }
   },
 
