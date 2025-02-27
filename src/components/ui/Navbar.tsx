@@ -69,7 +69,7 @@ export const Navbar = () => {
                 }`}
               >
                 <AchievementIcon className="w-5 h-5" />
-                <span>{t.achievements.title}</span>
+                <span>{t.nav.achievements}</span>
               </Link>
             </SignedIn>
           </div>
@@ -145,7 +145,7 @@ export const Navbar = () => {
               }`}
             >
               <AchievementIcon className="w-6 h-6" />
-              <span className="text-xs mt-1">{t.achievements.title}</span>
+              <span className="text-xs mt-1">{t.nav.achievements}</span>
             </Link>
           </SignedIn>
           

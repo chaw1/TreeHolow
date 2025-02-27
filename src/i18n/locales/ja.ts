@@ -26,6 +26,7 @@ export const ja = {
     home: "ホーム",
     treehole: "木のくぼみ",
     memories: "私の記憶",
+    achievements: "達成システム",
     settings: "設定",
     profile: "プロフィール",
     login: "ログイン",
@@ -115,6 +116,35 @@ export const ja = {
       words: "共有された言葉",
       emotions: "平均感情",
       achievements: "成長の足跡"
+    }
+  },
+  
+  // 成就和积分系统
+  achievements: {
+    title: "達成システム",
+    subtitle: "成長の足跡を記録し、特別なバッジを集めます",
+    progress: "達成進捗",
+    unlocked: "解除した達成",
+    completion: "完了度",
+    points: {
+      title: "私のポイント",
+      current: "現在のポイント",
+      description: "達成解除と毎日のチェックインでポイントを獲得できます",
+      future: "将来、特別なテーマや機能と交換可能になります"
+    },
+    checkIn: {
+      title: "毎日のチェックイン",
+      streak: "連続日数",
+      button: "今すぐチェックイン",
+      done: "今日はすでにチェックイン済み",
+      tomorrow: "明日また来てより多くのポイントを獲得しましょう！",
+      consecutive: "連続チェックインでより多くのボーナスポイントを獲得！"
+    },
+    categories: {
+      interaction: "交流達成",
+      emotion: "感情達成",
+      streak: "連続達成",
+      special: "特別達成"
     }
   },
 
