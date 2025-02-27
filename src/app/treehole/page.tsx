@@ -9,15 +9,15 @@ import TreeScene from '@/components/TreeScene';
 import { useUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Message } from '@/types/memory';
+import { Memory, Message } from '@/types/memory';
 
 export default function TreeHole() {
   const { user, isLoaded } = useUser();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedMemory, setSelectedMemory] = useState<Message | null>(null);
+  const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const { isRecording, startRecording, stopRecording, transcript, volume } = useVoiceRecorder();
-  const treeSceneRef = useRef<{ setSelectedMemory: (memory: Message | null) => void } | null>(null);
+  const treeSceneRef = useRef<{ setSelectedMemory: (memory: Memory | null) => void } | null>(null);
 
   // 检查用户登录状态
   useEffect(() => {
