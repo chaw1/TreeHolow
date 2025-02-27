@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1740625978456",
+    "content": "hello hello baby",
+    "aiResponse": "我注意到你可能感觉有点焦虑或者不安，可以告诉我发生了什么事吗？",
+    "audioUrl": "/audio/user_2s86m9EJFD8oUJ0ZofFaIkXHhp8/1740625978425.webm",
+    "timestamp": "2025-02-27T03:12:58.456Z",
+    "userId": "user_2s86m9EJFD8oUJ0ZofFaIkXHhp8"
+  },
+  {
+    "id": "1740629906431",
+    "content": "tell me a joke please I'm very sad today",
+    "aiResponse": "我注意到你今天感觉很难过，笑话可以帮助分散注意力和减轻压力。要听一个吗？",
+    "audioUrl": "/audio/user_2s86m9EJFD8oUJ0ZofFaIkXHhp8/1740629906416.webm",
+    "timestamp": "2025-02-27T04:18:26.431Z",
+    "userId": "user_2s86m9EJFD8oUJ0ZofFaIkXHhp8"
+  },
+  {
+    "id": "1740641193083",
+    "content": "hello hello hello tell me a joke please",
+    "aiResponse": "你好！这么多个hello，是想把我吵醒吗？好吧，笑话来了：为什么太阳不结婚？因为太阳有光了，没人能比得上！",
+    "audioUrl": "/audio/user_2s86m9EJFD8oUJ0ZofFaIkXHhp8/1740641193068.webm",
+    "timestamp": "2025-02-27T07:26:33.083Z",
+    "userId": "user_2s86m9EJFD8oUJ0ZofFaIkXHhp8"
+  }
+]

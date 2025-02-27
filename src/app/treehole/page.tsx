@@ -2,9 +2,9 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
-import { saveMemory, getUserMemories } from '@/utils/supabase';
+import { saveMemory, getUserMemories } from '@/utils/storage';
 import TreeScene from '@/components/TreeScene';
 import { useUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
@@ -15,7 +15,9 @@ export default function TreeHole() {
   const { user, isLoaded } = useUser();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedMemory, setSelectedMemory] = useState<Message | null>(null);
   const { isRecording, startRecording, stopRecording, transcript, volume } = useVoiceRecorder();
+  const treeSceneRef = useRef<{ setSelectedMemory: (memory: Message | null) => void } | null>(null);
 
   // 检查用户登录状态
   useEffect(() => {
@@ -32,14 +34,14 @@ export default function TreeHole() {
       try {
         const memories = await getUserMemories(user.id);
 
-        // 格式化消息
+        // 消息已经格式化，直接使用
         const formattedMessages = memories.map(memory => ({
           id: String(memory.id),
           type: 'user',
-          audioUrl: memory.audio_url,
-          content: memory.transcript,
-          aiResponse: memory.ai_response ?? '',
-          timestamp: memory.created_at
+          audioUrl: memory.audioUrl,
+          content: memory.content,
+          aiResponse: memory.aiResponse ?? '',
+          timestamp: memory.timestamp
         }));
 
         setMessages(formattedMessages);
@@ -88,18 +90,24 @@ export default function TreeHole() {
             data.text
           );
 
+          // 创建新记忆对象
+          const newMemory = {
+            id: savedMemory.id,
+            type: 'user',
+            audioUrl: savedMemory.audioUrl,
+            content: savedMemory.content,
+            aiResponse: savedMemory.aiResponse,
+            timestamp: savedMemory.timestamp
+          };
+          
           // 更新UI
           setMessages(prev => [
             ...prev,
-            {
-              id: savedMemory.id,
-              type: 'user',
-              audioUrl: savedMemory.audio_url,
-              content: savedMemory.transcript,
-              aiResponse: savedMemory.ai_response,
-              timestamp: savedMemory.created_at
-            }
+            newMemory
           ]);
+          
+          // 显示AI回应对话框
+          setSelectedMemory(newMemory);
         } catch (error) {
           console.error('Error processing speech:', error);
         } finally {
@@ -120,7 +128,11 @@ export default function TreeHole() {
   return (
     <div className="relative h-screen">
       {/* 3D树洞场景 */}
-      <TreeScene messages={messages} />
+      <TreeScene 
+        messages={messages}
+        selectedMemory={selectedMemory}
+        onSelectMemory={setSelectedMemory}
+      />
 
       {/* 录音控制 */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-10">

@@ -49,6 +49,20 @@ export async function saveMemory(
   }
 }
 
+// 获取音频文件的公共URL
+export function getAudioPublicUrl(path: string): string {
+  // 确保路径正确格式化
+  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  
+  // 获取公共URL
+  const { data } = supabase.storage
+    .from('audio-memories')
+    .getPublicUrl(cleanPath);
+    
+  // 添加下载参数以避免CORS/内容类型问题
+  return `${data.publicUrl}?download=true`;
+}
+
 export async function getUserMemories(userId: string): Promise<Memory[]> {
   const { data, error } = await supabase
     .from('user_memories')

@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { getUserMemories } from '@/utils/supabase';
+import { getUserMemories } from '@/utils/storage';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { Memory, Stats, DBMemory } from '@/types/memory';
@@ -22,25 +22,17 @@ export default function MemoriesPage() {
       try {
         const data = await getUserMemories(user.id);
 
-        // 格式化记忆数据
-        const formattedMemories = data.map(memory => ({
-          id: memory.id,
-          content: memory.transcript,
-          aiResponse: memory.ai_response,
-          timestamp: memory.created_at,
-          audioUrl: memory.audio_url,
-          emotionScore: 0
-        }));
+        // 数据已经格式化，直接使用
+        const formattedMemories = data;
 
         setMemories(formattedMemories);
 
         // 计算统计数据
         const stats: Stats = {
           totalInteractions: data.length,
-          // averageEmotionScore: data.reduce((sum, m) => sum + (m.emotion_score || 50), 0) / data.length,
           averageEmotionScore: 0,
           streakDays: calculateStreakDays(data),
-          totalWords: data.reduce((sum, m) => sum + (m.transcript?.split(/\s+/).length || 0), 0)
+          totalWords: data.reduce((sum, m) => sum + (m.content?.split(/\s+/).length || 0), 0)
         };
 
         setStats(stats);
@@ -54,15 +46,12 @@ export default function MemoriesPage() {
     loadData();
   }, [user]);
 
-  function calculateStreakDays(memories: any[]): number {
+  function calculateStreakDays(memories: Memory[]): number {
     if (memories.length === 0) return 0;
 
-    // const dates = [...new Set(memories.map(m =>
-    //   new Date(m.created_at).toDateString()
-    // ))];
     // 将原来的展开运算符改为使用 Array.from
     const dates = Array.from(new Set(memories.map(m =>
-      new Date(m.created_at).toDateString()
+      new Date(m.timestamp).toDateString()
     )));
 
     let streak = 1;

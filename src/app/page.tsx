@@ -22,7 +22,9 @@ export default function Home() {
     }
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative"></div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 overflow-y-auto relative">

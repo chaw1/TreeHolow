@@ -1,0 +1,48 @@
+/* 光芒发散阴影效果 */
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 235, 59, 0.6));
+}
+
+/* 背景渐变动画 */
+.animate-bg {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 改进记忆果实悬停效果 */
+.memory-fruit:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+/* 为记忆详情添加美观的滚动条 */
+.memory-detail::-webkit-scrollbar {
+  width: 6px;
+}
+
+.memory-detail::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.memory-detail::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.memory-detail::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
