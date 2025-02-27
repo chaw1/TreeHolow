@@ -26,8 +26,8 @@ export default function AchievementsPage() {
       
       setLoading(true);
       try {
-        // 获取成就
-        const achievementsRes = await fetch('/api/achievements');
+        // 获取成就（带上语言参数）
+        const achievementsRes = await fetch(`/api/achievements?locale=${currentLocale}&updateLocale=true`);
         const achievementsData = await achievementsRes.json();
         
         if (achievementsData.achievements) {
@@ -56,7 +56,7 @@ export default function AchievementsPage() {
     }
     
     loadData();
-  }, [user]);
+  }, [user, currentLocale]);
   
   // 处理签到
   const handleCheckIn = async () => {
@@ -107,27 +107,27 @@ export default function AchievementsPage() {
   
   // 类别标题映射
   const categoryTitles: Record<string, string> = {
-    interaction: '互动成就',
-    emotion: '情绪成就',
-    streak: '连续成就',
-    special: '特殊成就'
+    interaction: t.achievements.categories.interaction,
+    emotion: t.achievements.categories.emotion,
+    streak: t.achievements.categories.streak,
+    special: t.achievements.categories.special
   };
   
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">成就系统</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">记录成长足迹，收集特殊徽章</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t.achievements.title}</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">{t.achievements.subtitle}</p>
       </div>
       
       {/* 进度概览与签到 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* 成就进度 */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">成就进度</h3>
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">{t.achievements.progress}</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">解锁成就</span>
+              <span className="text-gray-600 dark:text-gray-400">{t.achievements.unlocked}</span>
               <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                 {unlockedCount}/{totalCount}
               </span>
@@ -139,16 +139,16 @@ export default function AchievementsPage() {
               />
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400 text-right">
-              完成度 {unlockedPercentage}%
+              {t.achievements.completion} {unlockedPercentage}%
             </div>
           </div>
         </div>
         
         {/* 积分系统 */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">我的积分</h3>
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">{t.achievements.points.title}</h3>
           <div className="flex items-center justify-between">
-            <span className="text-gray-600 dark:text-gray-400">当前积分</span>
+            <span className="text-gray-600 dark:text-gray-400">{t.achievements.points.current}</span>
             <div className="text-3xl font-bold text-amber-500 dark:text-amber-400 flex items-center">
               <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
@@ -157,19 +157,19 @@ export default function AchievementsPage() {
             </div>
           </div>
           <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-            <p>解锁成就和每日签到可以获得积分</p>
-            <p className="mt-1">未来可用于兑换特殊主题和功能</p>
+            <p>{t.achievements.points.description}</p>
+            <p className="mt-1">{t.achievements.points.future}</p>
           </div>
         </div>
         
         {/* 每日签到 */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">每日签到</h3>
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">{t.achievements.checkIn.title}</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">连续签到</span>
+              <span className="text-gray-600 dark:text-gray-400">{t.achievements.checkIn.streak}</span>
               <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                {checkInStreak} 天
+                {checkInStreak} {currentLocale === 'zh' ? '天' : currentLocale === 'ja' ? '日' : 'days'}
               </span>
             </div>
             
@@ -193,13 +193,13 @@ export default function AchievementsPage() {
                   : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg'
               }`}
             >
-              {isCheckedInToday ? '今日已签到' : '立即签到'}
+              {isCheckedInToday ? t.achievements.checkIn.done : t.achievements.checkIn.button}
             </button>
             
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
               {isCheckedInToday
-                ? '明天再来签到获取更多积分吧!'
-                : '连续签到可获得更多积分奖励!'}
+                ? t.achievements.checkIn.tomorrow
+                : t.achievements.checkIn.consecutive}
             </p>
           </div>
         </div>
