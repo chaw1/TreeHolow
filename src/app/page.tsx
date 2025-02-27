@@ -63,7 +63,7 @@ export default function Home() {
                 transition={{ duration: 0.8 }}
                 className="text-5xl md:text-7xl font-bold tracking-tight"
               >
-                <span className="inline-block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 animate-gradient-x bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 animate-gradient-x bg-clip-text text-transparent whitespace-nowrap">
                   {t.hero.title}
                 </span>
               </motion.h1>
@@ -72,7 +72,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="mt-8 text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto"
+                className="mt-8 text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto px-4"
               >
                 {t.hero.subtitle}
               </motion.p>
@@ -134,7 +134,7 @@ export default function Home() {
                   {t.features.title}
                 </h2>
                 <div className="mt-4 h-1 w-20 mx-auto bg-gradient-to-r from-indigo-500 to-purple-500"></div>
-                <p className="mt-6 text-xl text-gray-600 dark:text-gray-300">
+                <p className="mt-6 text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                   {t.features.subtitle}
                 </p>
               </div>
@@ -197,7 +197,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-hero-pattern opacity-10"></div>
                 <div className="relative z-10 max-w-3xl mx-auto">
                   <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.callToAction.title}</h2>
-                  <p className="text-xl text-indigo-100 mb-10">{t.callToAction.subtitle}</p>
+                  <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">{t.callToAction.subtitle}</p>
                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                     <Link
                       href={isSignedIn ? "/treehole" : "/sign-in"}
