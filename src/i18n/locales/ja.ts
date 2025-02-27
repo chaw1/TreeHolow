@@ -1,5 +1,39 @@
 // src/i18n/locales/ja.ts
 export const ja = {
+  // 通用 UI 元素
+  common: {
+    appName: "心の木のくぼみ",
+    loading: "読み込み中...",
+    error: "エラーが発生しました",
+    retry: "再試行",
+    save: "保存",
+    cancel: "キャンセル",
+    delete: "削除",
+    edit: "編集",
+    search: "検索",
+    submit: "送信",
+    close: "閉じる",
+    back: "戻る",
+    next: "次へ",
+    finish: "完了",
+    view: "表示",
+    show: "表示する",
+    hide: "隠す",
+  },
+
+  // 导航
+  nav: {
+    home: "ホーム",
+    treehole: "木のくぼみ",
+    memories: "私の記憶",
+    settings: "設定",
+    profile: "プロフィール",
+    login: "ログイン",
+    logout: "ログアウト",
+    signup: "登録",
+  },
+
+  // 首页
   hero: {
     title: "デジタル時代の心の安らぎ場所",
     subtitle: "ここでは、すべての物語が優しく扱われ、すべての感情に耳を傾けます。AIがあなたの想いを守り、デジタルの森で記憶を育てます。",
@@ -43,6 +77,68 @@ export const ja = {
         description: "デジタルの森で、自身の変容を見守ります"
       }
     }
+  },
+  callToAction: {
+    title: "心の旅を始めましょう",
+    subtitle: "木のくぼみでの共有は、心の解放と成長につながります。今すぐ体験してみましょう！",
+    button: "今すぐ始める"
+  },
+
+  // 树洞页面
+  treehole: {
+    title: "記憶の木",
+    subtitle: "光る果実をクリックして記憶を見る",
+    recording: "録音中...",
+    recordButton: "音声を録音",
+    stopButton: "録音停止",
+    processing: "処理中...",
+    memoryDetail: {
+      title: "記憶の果実",
+      aiResponse: "木のくぼみの応答",
+      closeButton: "記憶ウィンドウを閉じる"
+    }
+  },
+
+  // 记忆页面
+  memories: {
+    title: "私の記憶",
+    subtitle: "ここで共有のすべての瞬間を振り返ります",
+    empty: "まだ記録された記憶はありません...",
+    emptyAction: "木のくぼみで何かを共有しましょう",
+    tabs: {
+      memories: "記憶の振り返り",
+      stats: "心の旅"
+    },
+    stats: {
+      overview: "概要",
+      confessions: "告白回数",
+      words: "共有された言葉",
+      emotions: "平均感情",
+      achievements: "成長の足跡"
+    }
+  },
+
+  // 页脚
+  footer: {
+    rights: "全著作権所有",
+    tagline: "心のための安全でプライベートな空間",
+    sections: {
+      explore: "探索",
+      about: "について"
+    },
+    links: {
+      privacy: "プライバシーポリシー",
+      terms: "利用規約"
+    }
+  },
+
+  // 错误页面
+  error: {
+    notFound: "ページが見つかりません",
+    notFoundMessage: "お探しのページは存在しないか、移動されました。",
+    goHome: "ホームに戻る",
+    serverError: "サーバーエラー",
+    serverErrorMessage: "サーバー側で問題が発生しました。後でもう一度お試しください。"
   }
 };
 

@@ -5,9 +5,12 @@ import { usePathname } from 'next/navigation';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from './ThemeToggle';
 import { HomeIcon, MemoryIcon, TreeIcon, UserIcon } from './Icons';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export const Navbar = () => {
   const pathname = usePathname();
+  const { currentLocale, setCurrentLocale, t } = useLanguage();
   
   // 判断当前活跃路径
   const isActive = (path: string) => {
@@ -22,7 +25,7 @@ export const Navbar = () => {
           <Link href="/" className="flex items-center space-x-2">
             <span className="text-2xl">🌳</span>
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              心灵树洞
+              {t.common.appName}
             </span>
           </Link>
           
@@ -35,7 +38,7 @@ export const Navbar = () => {
               }`}
             >
               <HomeIcon className="w-5 h-5" />
-              <span>首页</span>
+              <span>{t.nav.home}</span>
             </Link>
             
             <SignedIn>
@@ -46,7 +49,7 @@ export const Navbar = () => {
                 }`}
               >
                 <TreeIcon className="w-5 h-5" />
-                <span>树洞空间</span>
+                <span>{t.nav.treehole}</span>
               </Link>
               
               <Link 
@@ -56,13 +59,17 @@ export const Navbar = () => {
                 }`}
               >
                 <MemoryIcon className="w-5 h-5" />
-                <span>我的记忆</span>
+                <span>{t.nav.memories}</span>
               </Link>
             </SignedIn>
           </div>
           
           {/* User Menu & Theme Toggle */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
+            <div className="hidden sm:block">
+              <LanguageSwitcher currentLocale={currentLocale} onLocaleChange={setCurrentLocale} />
+            </div>
+            
             <SignedIn>
               <UserButton 
                 afterSignOutUrl="/"
@@ -77,7 +84,7 @@ export const Navbar = () => {
             <SignedOut>
               <SignInButton mode="modal">
                 <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">
-                  登录
+                  {t.nav.login}
                 </button>
               </SignInButton>
             </SignedOut>
@@ -97,7 +104,7 @@ export const Navbar = () => {
             }`}
           >
             <HomeIcon className="w-6 h-6" />
-            <span className="text-xs mt-1">首页</span>
+            <span className="text-xs mt-1">{t.nav.home}</span>
           </Link>
           
           <SignedIn>
@@ -108,7 +115,7 @@ export const Navbar = () => {
               }`}
             >
               <TreeIcon className="w-6 h-6" />
-              <span className="text-xs mt-1">树洞</span>
+              <span className="text-xs mt-1">{t.nav.treehole}</span>
             </Link>
             
             <Link 
@@ -118,7 +125,7 @@ export const Navbar = () => {
               }`}
             >
               <MemoryIcon className="w-6 h-6" />
-              <span className="text-xs mt-1">记忆</span>
+              <span className="text-xs mt-1">{t.nav.memories}</span>
             </Link>
           </SignedIn>
           
@@ -126,7 +133,7 @@ export const Navbar = () => {
             <SignInButton mode="modal">
               <button className="flex flex-col items-center p-2 text-gray-600 dark:text-gray-400">
                 <UserIcon className="w-6 h-6" />
-                <span className="text-xs mt-1">登录</span>
+                <span className="text-xs mt-1">{t.nav.login}</span>
               </button>
             </SignInButton>
           </SignedOut>

@@ -5,22 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { locales, Locale } from '@/i18n';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Home() {
   const { isSignedIn } = useAuth();
-  const [currentLocale, setCurrentLocale] = useState<Locale>('en');
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
-  const t = locales[currentLocale];
 
   useEffect(() => {
     setMounted(true);
-    // 获取浏览器语言设置
-    const browserLang = navigator.language.split('-')[0];
-    if (browserLang in locales) {
-      setCurrentLocale(browserLang as Locale);
-    }
   }, []);
 
   if (!mounted) return (
@@ -44,13 +37,7 @@ export default function Home() {
         </svg>
       </div>
 
-      {/* 语言切换器 */}
-      <div className="absolute top-4 right-4 z-40">
-        <LanguageSwitcher
-          currentLocale={currentLocale}
-          onLocaleChange={setCurrentLocale}
-        />
-      </div>
+      {/* 移除了语言切换器，现在使用导航栏中的 */}
 
       {/* 主内容 */}
       <div className="relative z-10">
