@@ -18,7 +18,7 @@ export default function RootLayout({
       <LanguageProvider>
         <html lang="zh-CN" suppressHydrationWarning className="scroll-smooth">
           <head>
-            <link rel="stylesheet" href="/css/custom.css" />
+            {/* 外部样式已迁移到 globals.css */}
           </head>
           <body className={`${inter.className} text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300`} suppressHydrationWarning>
             {/* 导航栏 */}
