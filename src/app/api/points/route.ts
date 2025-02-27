@@ -120,6 +120,28 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// 生成本地化消息
+function getLocalizedMessage(locale: string, checkInStreak: number, bonusPoints: number): string {
+  if (locale === 'en') {
+    return `Checked in for ${checkInStreak} consecutive days, earned ${bonusPoints} points!`;
+  } else if (locale === 'ja') {
+    return `${checkInStreak}日連続でチェックインしました、${bonusPoints}ポイント獲得しました！`;
+  } else {
+    return `连续签到${checkInStreak}天，获得${bonusPoints}积分！`;
+  }
+}
+
+// 生成本地化签到记录原因
+function getLocalizedCheckInReason(locale: string, checkInStreak: number): string {
+  if (locale === 'en') {
+    return `Day ${checkInStreak} check-in`;
+  } else if (locale === 'ja') {
+    return `${checkInStreak}日目のチェックイン`;
+  } else {
+    return `第${checkInStreak}天签到`;
+  }
+}
+
 // 签到
 export async function PUT(request: NextRequest) {
   try {
@@ -128,6 +150,10 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
+    
+    // 获取语言偏好
+    const url = new URL(request.url);
+    const locale = url.searchParams.get('locale') || 'zh';
     
     // 确保用户目录存在
     const userDir = await ensureDirectoryExists(join(POINTS_DIR, userId));
@@ -148,9 +174,13 @@ export async function PUT(request: NextRequest) {
     
     // 检查是否已经签到
     if (pointsData.lastCheckIn && pointsData.lastCheckIn.split('T')[0] === today) {
+      const message = locale === 'en' ? 'Already checked in today' 
+                    : locale === 'ja' ? '今日はすでにチェックイン済みです' 
+                    : '今日已签到';
+      
       return NextResponse.json({ 
         success: false, 
-        message: "今日已签到",
+        message,
         points: pointsData.total,
         checkInStreak: pointsData.checkInStreak
       });
@@ -194,7 +224,7 @@ export async function PUT(request: NextRequest) {
     pointsData.history.push({
       date: new Date().toISOString(),
       amount: bonusPoints,
-      reason: `第${pointsData.checkInStreak}天签到`
+      reason: getLocalizedCheckInReason(locale, pointsData.checkInStreak)
     });
     
     // 保存更新后的积分数据
@@ -205,7 +235,7 @@ export async function PUT(request: NextRequest) {
       points: pointsData.total,
       added: bonusPoints,
       checkInStreak: pointsData.checkInStreak,
-      message: `连续签到${pointsData.checkInStreak}天，获得${bonusPoints}积分！`
+      message: getLocalizedMessage(locale, pointsData.checkInStreak, bonusPoints)
     });
     
   } catch (error) {

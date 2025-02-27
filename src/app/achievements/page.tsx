@@ -63,7 +63,7 @@ export default function AchievementsPage() {
     if (isCheckedInToday || !user) return;
     
     try {
-      const response = await fetch('/api/points', {
+      const response = await fetch(`/api/points?locale=${currentLocale}`, {
         method: 'PUT'
       });
       

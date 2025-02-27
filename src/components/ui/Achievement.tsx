@@ -3,6 +3,7 @@
 import React from 'react';
 import { Achievement as AchievementType } from '@/types/memory';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AchievementProps {
   achievement: AchievementType;
@@ -16,6 +17,7 @@ const Achievement: React.FC<AchievementProps> = ({
   showProgress = true 
 }) => {
   const { title, description, icon, unlocked, progress, points } = achievement;
+  const { t, currentLocale } = useLanguage();
   
   // 处理点击事件
   const handleClick = () => {
@@ -49,7 +51,12 @@ const Achievement: React.FC<AchievementProps> = ({
           
           {points > 0 && (
             <div className="mt-1 text-xs font-medium text-amber-600 dark:text-amber-400">
-              {unlocked ? '已获得' : '可获得'} {points} 积分
+              {unlocked 
+                ? (currentLocale === 'en' ? 'Earned ' : currentLocale === 'ja' ? '獲得した ' : '已获得')
+                : (currentLocale === 'en' ? 'Can earn ' : currentLocale === 'ja' ? '獲得可能 ' : '可获得')
+              }
+              {points}
+              {currentLocale === 'en' ? ' points' : currentLocale === 'ja' ? ' ポイント' : ' 积分'}
             </div>
           )}
           
