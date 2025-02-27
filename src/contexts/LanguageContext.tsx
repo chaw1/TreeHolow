@@ -11,9 +11,9 @@ type LanguageContextType = {
 
 // 创建默认上下文
 const defaultContext: LanguageContextType = {
-  currentLocale: 'zh',
+  currentLocale: 'en',
   setCurrentLocale: () => {},
-  t: locales.zh
+  t: locales.en
 };
 
 // 创建上下文
@@ -24,7 +24,7 @@ export const useLanguage = () => useContext(LanguageContext);
 
 // 语言提供者组件
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentLocale, setCurrentLocale] = useState<Locale>('zh');
+  const [currentLocale, setCurrentLocale] = useState<Locale>('en');
   const [mounted, setMounted] = useState(false);
 
   // 当前翻译文本

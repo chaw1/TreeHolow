@@ -5,15 +5,28 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { getUserMemories } from '@/utils/storage';
 import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+import { zhCN, enUS, ja } from 'date-fns/locale';
 import { Memory, Stats, DBMemory } from '@/types/memory';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function MemoriesPage() {
   const { user } = useUser();
+  const { t, currentLocale } = useLanguage();
   const [memories, setMemories] = useState<Memory[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [activeTab, setActiveTab] = useState('memories'); // 'memories' | 'stats'
   const [isLoading, setIsLoading] = useState(true);
+  
+  // 获取适当的日期-时间本地化设置
+  const getDateLocale = () => {
+    switch (currentLocale) {
+      case 'en': return enUS;
+      case 'ja': return ja;
+      case 'zh': 
+      default:
+        return zhCN;
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -87,31 +100,31 @@ export default function MemoriesPage() {
     <div className="container mx-auto px-4 py-8">
       {/* 页面标题 */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">我的记忆</h1>
-        <p className="text-gray-600 mt-2">在这里回顾每一次倾诉的时刻</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t.memories.title}</h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2">{t.memories.subtitle}</p>
       </div>
 
       {/* 标签切换 */}
-      <div className="flex space-x-4 mb-8 border-b">
+      <div className="flex space-x-4 mb-8 border-b border-gray-200 dark:border-gray-700">
         <button
           className={`pb-2 px-4 ${
             activeTab === 'memories'
-              ? 'border-b-2 border-indigo-500 text-indigo-600'
-              : 'text-gray-500'
+              ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400'
+              : 'text-gray-500 dark:text-gray-400'
           }`}
           onClick={() => setActiveTab('memories')}
         >
-          记忆回顾
+          {t.memories.tabs.memories}
         </button>
         <button
           className={`pb-2 px-4 ${
             activeTab === 'stats'
-              ? 'border-b-2 border-indigo-500 text-indigo-600'
-              : 'text-gray-500'
+              ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400'
+              : 'text-gray-500 dark:text-gray-400'
           }`}
           onClick={() => setActiveTab('stats')}
         >
-          心路历程
+          {t.memories.tabs.stats}
         </button>
       </div>
 
@@ -120,8 +133,8 @@ export default function MemoriesPage() {
         <div className="space-y-6">
           {memories.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">还没有记忆被记录下来...</p>
-              <p className="text-gray-400 text-sm mt-2">去树洞倾诉一下吧</p>
+              <p className="text-gray-500 dark:text-gray-400">{t.memories.empty}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">{t.memories.emptyAction}</p>
             </div>
           ) : (
             memories.map((memory) => (
@@ -133,12 +146,12 @@ export default function MemoriesPage() {
                   <div className="text-sm text-gray-500">
                     {formatDistanceToNow(new Date(memory.timestamp), {
                       addSuffix: true,
-                      locale: zhCN
+                      locale: getDateLocale()
                     })}
                   </div>
                   {memory.emotionScore && (
-                    <div className="text-sm">
-                      情绪值: {memory.emotionScore}
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {t.memories.stats.emotions}: {memory.emotionScore}
                     </div>
                   )}
                 </div>
@@ -163,24 +176,24 @@ export default function MemoriesPage() {
         // 统计信息
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 总体概况 */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">总体概况</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">{t.memories.stats.overview}</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">倾诉次数</span>
-                <span className="text-2xl font-bold text-indigo-600">
+                <span className="text-gray-600 dark:text-gray-400">{t.memories.stats.confessions}</span>
+                <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                   {stats?.totalInteractions || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">分享文字</span>
-                <span className="text-2xl font-bold text-indigo-600">
-                  {stats?.totalWords || 0} 字
+                <span className="text-gray-600 dark:text-gray-400">{t.memories.stats.words}</span>
+                <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  {stats?.totalWords || 0} {currentLocale === 'zh' ? '字' : ''}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">平均情绪值</span>
-                <span className="text-2xl font-bold text-indigo-600">
+                <span className="text-gray-600 dark:text-gray-400">{t.memories.stats.emotions}</span>
+                <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                   {Math.round(stats?.averageEmotionScore || 0)}
                 </span>
               </div>
@@ -188,8 +201,8 @@ export default function MemoriesPage() {
           </div>
 
           {/* 成就展示 */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">成长足迹</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">{t.memories.stats.achievements}</h3>
             <div className="grid grid-cols-2 gap-4">
               <Achievement
                 title="初次相遇"

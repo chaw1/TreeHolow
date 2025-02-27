@@ -196,14 +196,14 @@ export default function Home() {
               <div className="relative bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-16 md:py-20 text-center text-white">
                 <div className="absolute inset-0 bg-hero-pattern opacity-10"></div>
                 <div className="relative z-10 max-w-3xl mx-auto">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-6">开始你的心灵之旅</h2>
-                  <p className="text-xl text-indigo-100 mb-10">每一次树洞倾诉，都是一次心灵的释放与成长。现在就开始体验吧！</p>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.callToAction.title}</h2>
+                  <p className="text-xl text-indigo-100 mb-10">{t.callToAction.subtitle}</p>
                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                     <Link
                       href={isSignedIn ? "/treehole" : "/sign-in"}
                       className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 text-lg font-medium rounded-xl shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 transition-all duration-200"
                     >
-                      {isSignedIn ? "进入我的树洞" : "立即开始"}
+                      {isSignedIn ? t.nav.treehole : t.callToAction.button}
                       <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
