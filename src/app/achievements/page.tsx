@@ -9,7 +9,7 @@ import { Achievement as AchievementType } from '@/types/memory';
 
 export default function AchievementsPage() {
   const { user } = useUser();
-  const { t } = useLanguage();
+  const { t, currentLocale } = useLanguage();
   const [achievements, setAchievements] = useState<AchievementType[]>([]);
   const [points, setPoints] = useState<number>(0);
   const [checkInStreak, setCheckInStreak] = useState<number>(0);
