@@ -8,5 +8,10 @@ export default authMiddleware({
 
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-  runtime: 'nodejs'
+  // 强制使用 Node.js 运行时，不使用 Edge Runtime
+  runtime: 'nodejs',
+  unstable_allowDynamic: [
+    '**/node_modules/react-dom/node_modules/scheduler/cjs/scheduler.production.min.js',
+    '**/node_modules/scheduler/**/*'
+  ]
 };
