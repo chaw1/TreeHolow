@@ -45,7 +45,9 @@ export default function MemoriesPage() {
           totalInteractions: data.length,
           averageEmotionScore: 0,
           streakDays: calculateStreakDays(data),
-          totalWords: data.reduce((sum, m) => sum + (m.content?.split(/\s+/).length || 0), 0)
+          totalWords: data.reduce((sum, m) => sum + (m.content?.split(/\s+/).length || 0), 0),
+          points: 0,
+          checkInStreak: 0
         };
 
         setStats(stats);
