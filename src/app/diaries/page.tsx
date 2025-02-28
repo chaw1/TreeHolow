@@ -177,8 +177,8 @@ export default function DiariesPage() {
     <div className="container mx-auto px-4 py-8 pt-24">
       <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">心灵日记</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">记录每一刻的心情和感悟</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t.diaries.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">{t.diaries.subtitle}</p>
         </div>
         
         <div className="mt-4 md:mt-0 flex items-center space-x-4">

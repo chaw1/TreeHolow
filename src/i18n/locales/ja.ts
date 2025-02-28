@@ -32,6 +32,7 @@ export const ja = {
     login: "ログイン",
     logout: "ログアウト",
     signup: "登録",
+    diaries: "心の日記",
   },
 
   // 首页
@@ -169,6 +170,54 @@ export const ja = {
     goHome: "ホームに戻る",
     serverError: "サーバーエラー",
     serverErrorMessage: "サーバー側で問題が発生しました。後でもう一度お試しください。"
+  },
+  
+  // 心灵日记
+  diaries: {
+    title: "心の日記",
+    subtitle: "感情と洞察を記録する",
+    new: "新しい日記",
+    calendar: "カレンダー表示",
+    list: "リスト表示",
+    noEntries: "まだ日記はありません",
+    createFirst: "最初の日記を書きましょう",
+    selectDate: "カレンダーから日付を選択してください",
+    entryCount: "{count}件のエントリー",
+    totalEntries: "合計{count}件の日記があります。頑張りましょう！",
+    edit: "編集",
+    delete: "削除",
+    cancel: "キャンセル",
+    save: "保存",
+    saveChanges: "変更を保存",
+    deleteConfirm: "削除の確認",
+    deleteWarning: "この日記を削除してもよろしいですか？この操作は元に戻せません。",
+    confirmDelete: "削除を確認",
+    saveSuccess: "日記が正常に保存されました",
+    deleteSuccess: "日記が正常に削除されました",
+    
+    form: {
+      title: "タイトル",
+      titlePlaceholder: "今日のタイトル",
+      content: "内容",
+      contentPlaceholder: "あなたの考えを書き留めてください...",
+      mood: "今日の気分",
+      tags: "タグを追加",
+      customTag: "カスタムタグ",
+      addTag: "追加",
+      selectedTags: "選択したタグ",
+      location: "場所",
+      locationPlaceholder: "あなたの場所",
+      weather: "天気",
+      weatherPlaceholder: "今日の天気"
+    },
+    
+    moods: {
+      veryLow: "とても落ち込んでいる",
+      low: "少し落ち込んでいる",
+      neutral: "普通",
+      happy: "幸せ",
+      veryHappy: "とても幸せ"
+    }
   }
 };
 

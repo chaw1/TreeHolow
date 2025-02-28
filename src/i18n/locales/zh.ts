@@ -32,6 +32,7 @@ export const zh = {
     login: "登录",
     logout: "退出登录",
     signup: "注册",
+    diaries: "心灵日记",
   },
 
   // 首页
@@ -169,5 +170,53 @@ export const zh = {
     goHome: "返回首页",
     serverError: "服务器错误",
     serverErrorMessage: "我们这边出了些问题，请稍后再试。"
+  },
+  
+  // 心灵日记
+  diaries: {
+    title: "心灵日记",
+    subtitle: "记录每一刻的心情和感悟",
+    new: "写新日记",
+    calendar: "日历视图",
+    list: "列表视图",
+    noEntries: "还没有日记记录",
+    createFirst: "写下你的第一篇日记",
+    selectDate: "请从日历选择一天",
+    entryCount: "{count} 篇日记",
+    totalEntries: "共有 {count} 篇日记，继续加油！",
+    edit: "编辑",
+    delete: "删除",
+    cancel: "取消",
+    save: "保存",
+    saveChanges: "保存更改",
+    deleteConfirm: "确认删除",
+    deleteWarning: "确定要删除这篇日记吗？此操作无法撤销。",
+    confirmDelete: "确认删除",
+    saveSuccess: "日记保存成功",
+    deleteSuccess: "日记删除成功",
+    
+    form: {
+      title: "标题",
+      titlePlaceholder: "今天的标题",
+      content: "内容",
+      contentPlaceholder: "写下你的想法...",
+      mood: "今天的心情",
+      tags: "添加标签",
+      customTag: "自定义标签",
+      addTag: "添加",
+      selectedTags: "已选标签",
+      location: "位置",
+      locationPlaceholder: "你的位置",
+      weather: "天气",
+      weatherPlaceholder: "今天的天气"
+    },
+    
+    moods: {
+      veryLow: "非常低落",
+      low: "有点低落",
+      neutral: "平静",
+      happy: "开心",
+      veryHappy: "非常开心"
+    }
   }
 };

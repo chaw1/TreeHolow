@@ -32,6 +32,7 @@ export const en = {
     login: "Login",
     logout: "Logout",
     signup: "Sign Up",
+    diaries: "Soul Diaries",
   },
 
   // 首页
@@ -169,6 +170,54 @@ export const en = {
     goHome: "Go Home",
     serverError: "Server Error",
     serverErrorMessage: "Something went wrong on our end. Please try again later."
+  },
+  
+  // 心灵日记
+  diaries: {
+    title: "Soul Diaries",
+    subtitle: "Record your feelings and insights",
+    new: "New Diary",
+    calendar: "Calendar View",
+    list: "List View",
+    noEntries: "No diary entries yet",
+    createFirst: "Write your first diary entry",
+    selectDate: "Please select a date from the calendar",
+    entryCount: "{count} entries",
+    totalEntries: "Total of {count} diary entries, keep going!",
+    edit: "Edit",
+    delete: "Delete",
+    cancel: "Cancel",
+    save: "Save",
+    saveChanges: "Save Changes",
+    deleteConfirm: "Confirm Delete",
+    deleteWarning: "Are you sure you want to delete this diary? This action cannot be undone.",
+    confirmDelete: "Confirm Delete",
+    saveSuccess: "Diary saved successfully",
+    deleteSuccess: "Diary deleted successfully",
+    
+    form: {
+      title: "Title",
+      titlePlaceholder: "Today's title",
+      content: "Content",
+      contentPlaceholder: "Write down your thoughts...",
+      mood: "Today's Mood",
+      tags: "Add Tags",
+      customTag: "Custom Tag",
+      addTag: "Add",
+      selectedTags: "Selected Tags",
+      location: "Location",
+      locationPlaceholder: "Your location",
+      weather: "Weather",
+      weatherPlaceholder: "Today's weather"
+    },
+    
+    moods: {
+      veryLow: "Very Low",
+      low: "Low",
+      neutral: "Neutral",
+      happy: "Happy",
+      veryHappy: "Very Happy"
+    }
   }
 };
 

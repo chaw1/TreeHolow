@@ -79,7 +79,7 @@ export const Navbar = () => {
                 }`}
               >
                 <DiaryIcon className="w-5 h-5" />
-                <span>心灵日记</span>
+                <span>{t.nav.diaries}</span>
               </Link>
             </SignedIn>
           </div>
@@ -165,7 +165,7 @@ export const Navbar = () => {
               }`}
             >
               <DiaryIcon className="w-6 h-6" />
-              <span className="text-xs mt-1">日记</span>
+              <span className="text-xs mt-1">{t.nav.diaries}</span>
             </Link>
           </SignedIn>
           
