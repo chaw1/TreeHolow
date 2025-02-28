@@ -51,6 +51,17 @@ interface Diary {
 }
 
 export default function DiaryDetailPage({ params }: { params: { id: string } }) {
+  // 获取心情关键词
+  const getMoodKey = (mood: number): string => {
+    switch (mood) {
+      case 1: return 'veryLow';
+      case 2: return 'low';
+      case 3: return 'neutral';
+      case 4: return 'happy';
+      case 5: return 'veryHappy';
+      default: return 'neutral';
+    }
+  };
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
   const { currentLocale } = useLanguage();
@@ -171,7 +182,7 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
               <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              返回日记列表
+              {t.common.back}
             </button>
           </Link>
         </div>
@@ -198,8 +209,8 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
           <div className={`${moodBackgrounds[diary.mood]} text-white p-4 rounded-lg shadow-md flex items-center`}>
             <span className="text-4xl mr-3">{moodEmojis[diary.mood]}</span>
             <div>
-              <h3 className="font-medium">心情</h3>
-              <p>{moodDescriptions[diary.mood]}</p>
+              <h3 className="font-medium">{t.diaries.form.mood}</h3>
+              <p>{t.diaries.moods[getMoodKey(diary.mood)]}</p>
             </div>
           </div>
           
@@ -210,7 +221,7 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               <div>
-                <h3 className="font-medium">位置</h3>
+                <h3 className="font-medium">{t.diaries.form.location}</h3>
                 <p>{diary.location}</p>
               </div>
             </div>
@@ -222,7 +233,7 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
               </svg>
               <div>
-                <h3 className="font-medium">天气</h3>
+                <h3 className="font-medium">{t.diaries.form.weather}</h3>
                 <p>{diary.weather}</p>
               </div>
             </div>
@@ -241,7 +252,7 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
         {/* 标签 */}
         {diary.tags && diary.tags.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">标签</h3>
+            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">{t.diaries.form.tags}</h3>
             <div className="flex flex-wrap gap-2">
               {diary.tags.map(tag => (
                 <span
@@ -263,7 +274,7 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
               whileTap={{ scale: 0.95 }}
               className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700"
             >
-              编辑
+              {t.diaries.edit}
             </motion.button>
           </Link>
           <motion.button
@@ -272,7 +283,7 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
             onClick={() => setShowDeleteConfirm(true)}
             className="px-4 py-2 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700"
           >
-            删除
+            {t.diaries.delete}
           </motion.button>
         </div>
         
@@ -280,22 +291,22 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">确认删除</h3>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">{t.diaries.deleteConfirm}</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                确定要删除这篇日记吗？此操作无法撤销。
+                {t.diaries.deleteWarning}
               </p>
               <div className="flex justify-end space-x-4">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
                   className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
                 >
-                  取消
+                  {t.diaries.cancel}
                 </button>
                 <button
                   onClick={handleDelete}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 >
-                  确认删除
+                  {t.diaries.confirmDelete}
                 </button>
               </div>
             </div>
