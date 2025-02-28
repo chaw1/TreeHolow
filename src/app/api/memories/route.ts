@@ -27,7 +27,9 @@ export async function POST(request: NextRequest) {
 
     // 解析请求数据
     const data = await request.json();
-    const { transcript, aiResponse, audioUrl } = data;
+    const { transcript, aiResponse } = data;
+    // 确保audioUrl有值，即使是空字符串
+    const audioUrl = data.audioUrl || "";
 
     if (!transcript) {
       return NextResponse.json({ error: "记忆内容不能为空" }, { status: 400 });

@@ -38,7 +38,7 @@ export async function saveMemory(
       body: JSON.stringify({
         transcript,
         aiResponse,
-        audioUrl,
+        audioUrl: audioUrl || "", // 确保audioUrl为空字符串而不是null
       }),
     });
 
