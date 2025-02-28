@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,7 +16,13 @@ export async function GET(
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
 
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: cookies
+      }
+    );
     const diaryId = params.id;
 
     // 查询日记详情
@@ -57,7 +63,13 @@ export async function DELETE(
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
 
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: cookies
+      }
+    );
     const diaryId = params.id;
 
     // 先检查日记是否存在且属于当前用户
@@ -124,7 +136,13 @@ export async function PUT(
       );
     }
 
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: cookies
+      }
+    );
 
     // 先检查日记是否存在且属于当前用户
     const { data: diary, error: checkError } = await supabase
