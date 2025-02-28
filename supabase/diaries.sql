@@ -59,21 +59,70 @@ ALTER TABLE user_diaries ENABLE ROW LEVEL SECURITY;
 -- 创建策略
 CREATE POLICY "Users can view own diaries"
 ON user_diaries FOR SELECT
-USING (auth.uid() = user_id);
+USING (auth.uid()::text = user_id);
 
 CREATE POLICY "Users can insert own diaries"
 ON user_diaries FOR INSERT
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK (auth.uid()::text = user_id);
 
 CREATE POLICY "Users can update own diaries"
 ON user_diaries FOR UPDATE
-USING (auth.uid() = user_id);
+USING (auth.uid()::text = user_id);
 
 CREATE POLICY "Users can delete own diaries"
 ON user_diaries FOR DELETE
-USING (auth.uid() = user_id);
+USING (auth.uid()::text = user_id);
 
 -- 安全策略：公开日记可以被其他用户浏览
 CREATE POLICY "Users can view public diaries"
 ON user_diaries FOR SELECT
 USING (is_private = false);
+
+-- 创建心情分布统计函数
+CREATE OR REPLACE FUNCTION get_mood_distribution(
+  user_id_param TEXT,
+  start_date TIMESTAMPTZ,
+  end_date TIMESTAMPTZ
+) RETURNS TABLE (
+  mood INTEGER,
+  count BIGINT
+) LANGUAGE SQL AS $$
+  SELECT 
+    mood, 
+    COUNT(*) as count
+  FROM 
+    user_diaries
+  WHERE 
+    user_id = user_id_param
+    AND created_at >= start_date
+    AND created_at <= end_date
+  GROUP BY 
+    mood
+  ORDER BY 
+    mood;
+$$;
+
+-- 创建标签统计函数
+CREATE OR REPLACE FUNCTION get_tag_counts(
+  user_id_param TEXT,
+  start_date TIMESTAMPTZ,
+  end_date TIMESTAMPTZ
+) RETURNS TABLE (
+  tag TEXT,
+  count BIGINT
+) LANGUAGE SQL AS $$
+  SELECT 
+    UNNEST(tags) as tag, 
+    COUNT(*) as count
+  FROM 
+    user_diaries
+  WHERE 
+    user_id = user_id_param
+    AND created_at >= start_date
+    AND created_at <= end_date
+    AND tags IS NOT NULL
+  GROUP BY 
+    tag
+  ORDER BY 
+    count DESC;
+$$;

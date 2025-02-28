@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from './ThemeToggle';
-import { HomeIcon, MemoryIcon, TreeIcon, UserIcon, AchievementIcon } from './Icons';
+import { HomeIcon, MemoryIcon, TreeIcon, UserIcon, AchievementIcon, DiaryIcon } from './Icons';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 
@@ -70,6 +70,16 @@ export const Navbar = () => {
               >
                 <AchievementIcon className="w-5 h-5" />
                 <span>{t.nav.achievements}</span>
+              </Link>
+              
+              <Link 
+                href="/diaries" 
+                className={`flex items-center space-x-1 hover:text-indigo-600 transition-colors ${
+                  isActive('/diaries') ? 'text-indigo-600 font-medium' : 'text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <DiaryIcon className="w-5 h-5" />
+                <span>心灵日记</span>
               </Link>
             </SignedIn>
           </div>
@@ -146,6 +156,16 @@ export const Navbar = () => {
             >
               <AchievementIcon className="w-6 h-6" />
               <span className="text-xs mt-1">{t.nav.achievements}</span>
+            </Link>
+            
+            <Link 
+              href="/diaries" 
+              className={`flex flex-col items-center p-2 ${
+                isActive('/diaries') ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-400'
+              }`}
+            >
+              <DiaryIcon className="w-6 h-6" />
+              <span className="text-xs mt-1">日记</span>
             </Link>
           </SignedIn>
           

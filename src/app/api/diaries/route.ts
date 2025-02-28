@@ -139,14 +139,13 @@ export async function PUT(request: NextRequest) {
     const data = await request.json();
     const { startDate, endDate } = data;
     
-    // 心情分布统计
+    // 心情分布统计 - 使用SQL查询来执行分组
     const { data: moodData, error: moodError } = await supabase
-      .from('user_diaries')
-      .select('mood, count')
-      .eq('user_id', userId)
-      .gte('created_at', startDate || '1900-01-01')
-      .lte('created_at', endDate || new Date().toISOString())
-      .group('mood');
+      .rpc('get_mood_distribution', { 
+        user_id_param: userId,
+        start_date: startDate || '1900-01-01',
+        end_date: endDate || new Date().toISOString()
+      });
     
     if (moodError) {
       console.error("获取心情统计错误:", moodError);
