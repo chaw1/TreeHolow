@@ -139,8 +139,11 @@ export default function DiariesPage() {
   const diaryDates = getDiaryDates();
 
   // 自定义渲染日期函数
-  const renderDay = (day: Date) => {
-    const dateString = format(day, 'yyyy-MM-dd');
+  const renderDay = (props: any) => {
+    const { day } = props;
+    if (!day) return <div></div>;
+    
+    const dateString = format(day.date, 'yyyy-MM-dd');
     const count = diaryDates[dateString] || 0;
     
     let mood = 0;
@@ -158,7 +161,7 @@ export default function DiariesPage() {
           <div className={`absolute inset-0 rounded-full ${moodColors[mood]} opacity-50`}></div>
         )}
         <span className={`relative z-10 ${selectedDay && dateString === format(selectedDay, 'yyyy-MM-dd') ? 'font-bold' : ''}`}>
-          {day.getDate()}
+          {day.date.getDate()}
         </span>
         {count > 0 && (
           <span className="absolute bottom-0 right-0 flex h-2 w-2 items-center justify-center">
