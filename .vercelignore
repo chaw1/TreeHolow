@@ -1,0 +1,10 @@
+# Ignore scheduler warning in node_modules
+node_modules/react-dom/node_modules/scheduler/cjs/scheduler.production.min.js
+
+# Ignore punycode deprecation warning
+node_modules/**/punycode
+
+# Ignore development files
+.git
+.github
+.next/cache

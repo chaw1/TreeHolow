@@ -1,0 +1,14 @@
+{
+  "buildCommand": "next build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "nodeVersion": "18.x",
+  "regions": ["sin1"],
+  "envVarDevelopment": {
+    "NODE_ENV": "development"
+  },
+  "env": {
+    "NODE_OPTIONS": "--no-warnings"
+  }
+}
