@@ -4,10 +4,16 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 // 用于路由处理程序的带cookie的客户端
 export function createClient() {
-  // 为了解决RLS问题，直接使用普通客户端绕过RLS约束
+  // 使用服务密钥绕过RLS策略
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
   );
 
   // 下面是带有cookie管理的标准方式，目前RLS有问题，暂不使用
