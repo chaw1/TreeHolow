@@ -168,6 +168,8 @@ export default function TreeHole() {
 
   // 处理录音处理和AI响应
   const processRecording = async () => {
+    if (!user) return;
+    
     try {
       const { audioBlob, text } = await stopRecording();
       
