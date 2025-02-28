@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
-import { supabase } from "@/utils/supabase";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 // 获取日记列表
 export async function GET(request: NextRequest) {
@@ -10,6 +11,15 @@ export async function GET(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
+
+    // 创建Supabase客户端
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: cookies
+      }
+    );
 
     // 解析查询参数
     const url = new URL(request.url);
@@ -84,6 +94,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
 
+    // 创建Supabase客户端
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: cookies
+      }
+    );
+
     // 解析请求数据
     const data = await request.json();
     const { title, content, mood, tags, imageUrl, location, weather } = data;
@@ -134,6 +153,15 @@ export async function PUT(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "未授权" }, { status: 401 });
     }
+
+    // 创建Supabase客户端
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: cookies
+      }
+    );
 
     // 获取指定时间范围的统计数据
     const data = await request.json();

@@ -59,19 +59,19 @@ ALTER TABLE user_diaries ENABLE ROW LEVEL SECURITY;
 -- 创建策略
 CREATE POLICY "Users can view own diaries"
 ON user_diaries FOR SELECT
-USING (auth.uid()::text = user_id);
+USING (user_id = auth.uid()::text);
 
 CREATE POLICY "Users can insert own diaries"
 ON user_diaries FOR INSERT
-WITH CHECK (auth.uid()::text = user_id);
+WITH CHECK (user_id = auth.uid()::text);
 
 CREATE POLICY "Users can update own diaries"
 ON user_diaries FOR UPDATE
-USING (auth.uid()::text = user_id);
+USING (user_id = auth.uid()::text);
 
 CREATE POLICY "Users can delete own diaries"
 ON user_diaries FOR DELETE
-USING (auth.uid()::text = user_id);
+USING (user_id = auth.uid()::text);
 
 -- 安全策略：公开日记可以被其他用户浏览
 CREATE POLICY "Users can view public diaries"
