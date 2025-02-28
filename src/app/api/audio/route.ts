@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
           success: true,
           audioUrl: dataUrl
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("生成音频Data URL错误:", error);
-        return NextResponse.json({ error: "音频处理失败", details: error.message }, { status: 500 });
+        return NextResponse.json({ error: "音频处理失败", details: error?.message || "未知错误" }, { status: 500 });
       }
     }
     
@@ -95,14 +95,14 @@ export async function POST(request: NextRequest) {
           success: true,
           audioUrl: dataUrl
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("回退到Data URL失败:", error);
-        return NextResponse.json({ error: "音频处理失败", details: error.message }, { status: 500 });
+        return NextResponse.json({ error: "音频处理失败", details: error?.message || "未知错误" }, { status: 500 });
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("上传音频错误:", error);
-    return NextResponse.json({ error: "上传音频失败", details: error.message }, { status: 500 });
+    return NextResponse.json({ error: "上传音频失败", details: error?.message || "未知错误" }, { status: 500 });
   }
 }
 
@@ -120,8 +120,8 @@ export async function GET(request: NextRequest) {
       message: "请使用/api/memories端点获取音频列表"
     });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error("获取音频列表错误:", error);
-    return NextResponse.json({ error: "获取音频列表失败" }, { status: 500 });
+    return NextResponse.json({ error: "获取音频列表失败", details: error?.message || "未知错误" }, { status: 500 });
   }
 }

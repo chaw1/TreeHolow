@@ -111,9 +111,9 @@ export async function POST(request: NextRequest) {
       
       return NextResponse.json({ success: true, memory });
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("保存记忆错误:", error);
-    return NextResponse.json({ error: "保存记忆失败", details: error.message }, { status: 500 });
+    return NextResponse.json({ error: "保存记忆失败", details: error?.message || "未知错误" }, { status: 500 });
   }
 }
 
@@ -157,8 +157,8 @@ export async function GET(request: NextRequest) {
       const memoryBackup = memoryStore.get(userId) || [];
       return NextResponse.json({ memories: memoryBackup });
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("获取记忆错误:", error);
-    return NextResponse.json({ error: "获取记忆失败", details: error.message }, { status: 500 });
+    return NextResponse.json({ error: "获取记忆失败", details: error?.message || "未知错误" }, { status: 500 });
   }
 }
