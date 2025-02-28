@@ -192,7 +192,7 @@ export default function DiariesPage() {
                   : 'text-gray-600 dark:text-gray-300'
               }`}
             >
-              日历视图
+              {t.diaries.calendar}
             </button>
             <button
               onClick={() => setView('list')}
@@ -202,7 +202,7 @@ export default function DiariesPage() {
                   : 'text-gray-600 dark:text-gray-300'
               }`}
             >
-              列表视图
+              {t.diaries.list}
             </button>
           </div>
           
@@ -213,7 +213,7 @@ export default function DiariesPage() {
               whileTap={{ scale: 0.95 }}
               className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg shadow-md hover:shadow-lg"
             >
-              写新日记
+              {t.diaries.new}
             </motion.button>
           </Link>
         </div>
@@ -237,9 +237,9 @@ export default function DiariesPage() {
             />
             <div className="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
               {totalDiaries > 0 ? (
-                <p>共有 {totalDiaries} 篇日记，继续加油！</p>
+                <p>{t.diaries.totalEntries.replace('{count}', totalDiaries.toString())}</p>
               ) : (
-                <p>开始记录你的第一篇日记吧！</p>
+                <p>{t.diaries.createFirst}</p>
               )}
             </div>
           </div>
@@ -248,12 +248,12 @@ export default function DiariesPage() {
           <div className="col-span-1 md:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 min-h-[400px]">
             <div className="mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
               <h3 className="text-xl font-semibold">
-                {selectedDay ? format(selectedDay, 'yyyy年MM月dd日', { locale: getDateLocale() }) : '所有日记'}
+                {selectedDay ? format(selectedDay, 'yyyy年MM月dd日', { locale: getDateLocale() }) : t.diaries.title}
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {selectedDiaries.length > 0 
-                  ? `${selectedDiaries.length} 篇日记` 
-                  : '暂无日记'}
+                  ? t.diaries.entryCount.replace('{count}', selectedDiaries.length.toString())
+                  : t.diaries.noEntries}
               </p>
             </div>
             
@@ -295,15 +295,15 @@ export default function DiariesPage() {
                 </svg>
                 {selectedDay ? (
                   <div className="text-center">
-                    <p className="mb-2">这一天还没有日记</p>
+                    <p className="mb-2">{t.diaries.selectDate}</p>
                     <Link href="/diaries/new">
                       <button className="text-indigo-600 dark:text-indigo-400 hover:underline">
-                        写一篇新日记
+                        {t.diaries.new}
                       </button>
                     </Link>
                   </div>
                 ) : (
-                  <p>请从日历选择一天</p>
+                  <p>{t.diaries.selectDate}</p>
                 )}
               </div>
             )}
@@ -368,10 +368,10 @@ export default function DiariesPage() {
               <svg className="w-16 h-16 mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
-              <p className="mb-2">还没有日记记录</p>
+              <p className="mb-2">{t.diaries.noEntries}</p>
               <Link href="/diaries/new">
                 <button className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
-                  写下你的第一篇日记
+                  {t.diaries.createFirst}
                 </button>
               </Link>
             </div>
