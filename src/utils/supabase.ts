@@ -16,24 +16,43 @@ export interface Memory {
 
 export async function saveMemory(
   userId: string,
-  audioBlob: Blob,
+  audioBlob: Blob | null,
   transcript: string,
   aiResponse: string
 ): Promise<Memory> {
   try {
-    const audioFileName = `${userId}/${Date.now()}.webm`;
-    const { data: audioData, error: audioError } = await supabase.storage
-      .from('audio-memories')
-      .upload(audioFileName, audioBlob);
+    // 音频URL (可能是null或base64数据URL或存储路径)
+    let audioUrl = null;
+    
+    // 如果有音频文件，则上传到Supabase存储
+    if (audioBlob) {
+      // 检查是否为dataURL (即以data:开头的base64编码)
+      if (typeof audioBlob === 'string' && audioBlob.startsWith('data:')) {
+        // 已经是data URL，直接使用
+        audioUrl = audioBlob;
+      } else {
+        // 正常的Blob对象，上传到Supabase Storage
+        const audioFileName = `${userId}/${Date.now()}.webm`;
+        const { data: audioData, error: audioError } = await supabase.storage
+          .from('audio-memories')
+          .upload(audioFileName, audioBlob);
+  
+        if (audioError) {
+          console.error('Error uploading audio:', audioError);
+          // 不抛出异常，继续处理记忆保存
+        } else {
+          audioUrl = audioData?.path || null;
+        }
+      }
+    }
 
-    if (audioError) throw audioError;
-
+    // 插入记忆数据
     const { data, error } = await supabase
       .from('user_memories')
       .insert([
         {
           user_id: userId,
-          audio_url: audioData?.path,
+          audio_url: audioUrl,
           transcript,
           ai_response: aiResponse
         }
