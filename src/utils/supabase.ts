@@ -27,9 +27,10 @@ export async function saveMemory(
     // 如果有音频文件，则上传到Supabase存储
     if (audioBlob) {
       // 检查是否为dataURL (即以data:开头的base64编码)
-      if (typeof audioBlob === 'string' && audioBlob.startsWith('data:')) {
+      const blobAsAny = audioBlob as any;
+      if (typeof blobAsAny === 'string' && blobAsAny.startsWith && blobAsAny.startsWith('data:')) {
         // 已经是data URL，直接使用
-        audioUrl = audioBlob;
+        audioUrl = blobAsAny;
       } else {
         // 正常的Blob对象，上传到Supabase Storage
         const audioFileName = `${userId}/${Date.now()}.webm`;
