@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabaseClient";
+import { createClient } from "@/utils/supabaseServer";
 
 /**
  * 获取单个日记详情

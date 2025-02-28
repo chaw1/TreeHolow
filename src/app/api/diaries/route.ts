@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
-import { createClient } from "@/utils/supabaseClient";
+import { createClient } from "@/utils/supabaseServer";
 
 // 获取日记列表
 export async function GET(request: NextRequest) {
