@@ -4,25 +4,30 @@ import { Memory } from "@/types/memory";
 // 保存记忆到本地存储
 export async function saveMemory(
   userId: string,
-  audioBlob: Blob,
+  audioBlob: Blob | null,
   transcript: string,
   aiResponse: string
 ): Promise<Memory> {
   try {
-    // 1. 上传音频文件
-    const formData = new FormData();
-    formData.append("audio", audioBlob);
+    let audioUrl = null;
+    
+    // 1. 如果有音频，上传音频文件
+    if (audioBlob) {
+      const formData = new FormData();
+      formData.append("audio", audioBlob);
 
-    const audioResponse = await fetch("/api/audio", {
-      method: "POST",
-      body: formData,
-    });
+      const audioResponse = await fetch("/api/audio", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (!audioResponse.ok) {
-      throw new Error("上传音频失败");
+      if (!audioResponse.ok) {
+        throw new Error("上传音频失败");
+      }
+
+      const audioData = await audioResponse.json();
+      audioUrl = audioData.audioUrl;
     }
-
-    const { audioUrl } = await audioResponse.json();
 
     // 2. 保存记忆
     const memoryResponse = await fetch("/api/memories", {
