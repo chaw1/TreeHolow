@@ -1,5 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 
+// 类型扩展
+declare global {
+  interface MediaRecorder {
+    chunks?: BlobPart[];
+  }
+
+  interface Window {
+    webkitSpeechRecognition: any;
+    SpeechRecognition: any;
+  }
+}
+
 export const useVoiceRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPressRecording, setIsPressRecording] = useState(false); // 新增：按住录音状态
@@ -132,7 +144,9 @@ export const useVoiceRecorder = () => {
       startVolumeMonitoring(analyser);
       
       // 保存chunks用于后续处理
-      mediaRecorderRef.current.chunks = chunks;
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.chunks = chunks;
+      }
     } catch (error) {
       console.error('Error starting recording:', error);
     }
@@ -151,14 +165,24 @@ export const useVoiceRecorder = () => {
         mediaRecorderRef.current.onstop = () => {
           const audioBlob = new Blob(chunks, { type: 'audio/webm' });
           if (recognitionRef.current) {
-            recognitionRef.current.stop();
+            try {
+              recognitionRef.current.stop();
+            } catch (e) {
+              console.warn('Error stopping recognition:', e);
+            }
           }
           resolve({ audioBlob, text: transcript });
           setTranscript('');
           setVolume(0);
         };
 
-        mediaRecorderRef.current.stop();
+        try {
+          mediaRecorderRef.current.stop();
+        } catch (e) {
+          console.warn('Error stopping media recorder:', e);
+          resolve({ audioBlob: new Blob(), text: transcript });
+        }
+        
         setIsRecording(false);
         setIsPressRecording(false);
       } else {
@@ -184,7 +208,9 @@ export const useVoiceRecorder = () => {
       startVolumeMonitoring(analyser);
       
       // 保存chunks用于后续处理
-      mediaRecorderRef.current.chunks = chunks;
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.chunks = chunks;
+      }
     } catch (error) {
       console.error('Error starting press recording:', error);
     }
