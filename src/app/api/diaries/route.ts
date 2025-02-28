@@ -98,7 +98,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "标题和内容不能为空" }, { status: 400 });
     }
     
-    // 创建新日记
+    console.log("正在创建日记，用户ID:", userId);
+
+    // 创建新日记，使用服务器端管理员客户端绕过RLS策略
     const { data: diary, error } = await supabase
       .from('user_diaries')
       .insert([
@@ -110,7 +112,8 @@ export async function POST(request: NextRequest) {
           tags: tags || [],
           image_url: imageUrl,
           location,
-          weather
+          weather,
+          is_private: true
         }
       ])
       .select()
@@ -118,7 +121,7 @@ export async function POST(request: NextRequest) {
     
     if (error) {
       console.error("创建日记错误:", error);
-      return NextResponse.json({ error: "创建日记失败" }, { status: 500 });
+      return NextResponse.json({ error: "创建日记失败", details: error }, { status: 500 });
     }
     
     return NextResponse.json({ 
