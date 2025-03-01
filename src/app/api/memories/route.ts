@@ -12,12 +12,19 @@ const supabase = createClient(
 
 // 将DB记录格式转换为前端格式
 function transformMemory(memory: DBMemory): Memory {
+  // 处理音频URL，确保是完整的公共URL
+  let audioUrl = memory.audio_url;
+  if (audioUrl && !audioUrl.includes('://')) {
+    // 构建Supabase存储公共URL
+    audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-memories/${audioUrl}?download=true`;
+  }
+
   return {
     id: memory.id,
     content: memory.transcript,
     aiResponse: memory.ai_response,
     timestamp: memory.created_at,
-    audioUrl: memory.audio_url,
+    audioUrl: audioUrl,
     emotionScore: memory.emotion_score
   };
 }

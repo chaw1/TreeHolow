@@ -351,11 +351,13 @@ export async function userCheckin(userId: string): Promise<{success: boolean, po
     
     // 检查是否已经今天签到过
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    // 获取当前日期的年月日（不含时间）字符串格式 YYYY-MM-DD
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     
     if (lastCheckin) {
       const lastCheckinDate = new Date(lastCheckin);
-      const lastCheckinDay = new Date(lastCheckinDate.getFullYear(), lastCheckinDate.getMonth(), lastCheckinDate.getDate()).toISOString();
+      // 同样格式化上次签到的日期为 YYYY-MM-DD
+      const lastCheckinDay = `${lastCheckinDate.getFullYear()}-${String(lastCheckinDate.getMonth() + 1).padStart(2, '0')}-${String(lastCheckinDate.getDate()).padStart(2, '0')}`;
       
       if (lastCheckinDay === today) {
         return { success: false, points: 0, streak: checkinStreak };
@@ -373,8 +375,12 @@ export async function userCheckin(userId: string): Promise<{success: boolean, po
       
       const lastCheckinDay = new Date(lastCheckinDate.getFullYear(), lastCheckinDate.getMonth(), lastCheckinDate.getDate());
       
+      // 使用相同的格式化函数来比较日期
+      const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+      const lastCheckinStr = `${lastCheckinDay.getFullYear()}-${String(lastCheckinDay.getMonth() + 1).padStart(2, '0')}-${String(lastCheckinDay.getDate()).padStart(2, '0')}`;
+      
       // 如果上次签到是昨天，连续签到天数+1，否则重置为1
-      if (lastCheckinDay.getTime() === yesterdayDate.getTime()) {
+      if (lastCheckinStr === yesterdayStr) {
         newStreak += 1;
       } else {
         newStreak = 1;

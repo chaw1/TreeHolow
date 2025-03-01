@@ -159,7 +159,11 @@ export default function MemoriesPage() {
                 </div>
 
                 {memory.audioUrl && (
-                  <audio controls src={memory.audioUrl} className="w-full mb-4" />
+                  <audio 
+                    controls 
+                    src={memory.audioUrl} 
+                    className="w-full mb-4" 
+                  />
                 )}
 
                 <div className="space-y-4">
