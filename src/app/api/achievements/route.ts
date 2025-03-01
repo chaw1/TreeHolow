@@ -5,6 +5,9 @@ import { existsSync } from "fs";
 import { auth } from "@clerk/nextjs";
 import { Achievement } from "@/types/memory";
 
+// 内存存储，用于Vercel环境
+const inMemoryAchievements: Record<string, Achievement[]> = {};
+
 // 成就存储目录
 const ACHIEVEMENT_DIR = join(process.cwd(), "data", "achievements");
 
@@ -309,16 +312,37 @@ export async function GET(request: NextRequest) {
     const userDir = await ensureDirectoryExists(join(ACHIEVEMENT_DIR, userId));
     const achievementsPath = join(userDir, "achievements.json");
     
-    // 如果文件不存在，创建默认成就列表（根据用户语言）
+    // 如果文件不存在，创建默认成就列表（根据用户语言）或使用内存中的数据
     if (!existsSync(achievementsPath)) {
+      // 如果内存中有，使用内存中的数据
+      if (inMemoryAchievements[userId]) {
+        return NextResponse.json({ achievements: inMemoryAchievements[userId] });
+      }
+      
+      // 否则创建新的成就列表
       const localizedAchievements = getLocalizedAchievements(locale);
-      await writeFile(achievementsPath, JSON.stringify(localizedAchievements, null, 2));
+      try {
+        await writeFile(achievementsPath, JSON.stringify(localizedAchievements, null, 2));
+      } catch (error) {
+        console.log("写入新文件失败，使用内存:", error);
+      }
+      // 更新内存中的副本
+      inMemoryAchievements[userId] = localizedAchievements;
       return NextResponse.json({ achievements: localizedAchievements });
     }
     
-    // 读取成就
-    const fileData = await readFile(achievementsPath, "utf-8");
-    const achievements = JSON.parse(fileData);
+    // 读取成就（尝试从文件读取，失败则从内存读取或使用默认值）
+    let achievements: Achievement[];
+    try {
+      const fileData = await readFile(achievementsPath, "utf-8");
+      achievements = JSON.parse(fileData);
+      // 同步更新内存缓存
+      inMemoryAchievements[userId] = achievements;
+    } catch (error) {
+      console.log("从文件读取失败，尝试从内存获取:", error);
+      // 从内存获取或使用默认值
+      achievements = inMemoryAchievements[userId] || getLocalizedAchievements(locale);
+    }
     
     // 检查是否需要更新成就的语言
     if (url.searchParams.has('updateLocale')) {
@@ -337,7 +361,13 @@ export async function GET(request: NextRequest) {
         return achievement;
       });
       
-      await writeFile(achievementsPath, JSON.stringify(updatedAchievements, null, 2));
+      try {
+        await writeFile(achievementsPath, JSON.stringify(updatedAchievements, null, 2));
+      } catch (error) {
+        console.log("写入文件失败，仅更新内存:", error);
+      }
+      // 无论文件写入是否成功，都更新内存
+      inMemoryAchievements[userId] = updatedAchievements;
       return NextResponse.json({ achievements: updatedAchievements });
     }
     
