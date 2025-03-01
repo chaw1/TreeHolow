@@ -52,7 +52,7 @@ interface Diary {
 
 export default function DiaryDetailPage({ params }: { params: { id: string } }) {
   // 获取心情关键词
-  const getMoodKey = (mood: number): string => {
+  const getMoodKey = (mood: number): 'veryLow' | 'low' | 'neutral' | 'happy' | 'veryHappy' => {
     switch (mood) {
       case 1: return 'veryLow';
       case 2: return 'low';
