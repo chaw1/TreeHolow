@@ -269,7 +269,13 @@ export async function getUserPoints(userId: string): Promise<{totalPoints: numbe
     if (error || !points || points.length === 0) {
       const { data: newPoints, error: insertError } = await supabaseAdmin
         .from('user_points')
-        .insert([{ user_id: userId, total_points: 0, checkin_streak: 0 }])
+        .upsert([{ 
+          user_id: userId, 
+          total_points: 0, 
+          checkin_streak: 0,
+          // 确保创建时不会有null值导致的问题
+          last_checkin: null
+        }], { onConflict: 'user_id' })
         .select()
         .single();
       
@@ -304,15 +310,18 @@ export async function addUserPoints(userId: string, points: number, source: stri
     const currentPoints = await getUserPoints(userId);
     const newTotal = currentPoints.totalPoints + points;
     
-    // 更新总积分
+    // 更新总积分 - 确保保留其他字段原有值
     const { error: updateError } = await supabaseAdmin
       .from('user_points')
       .upsert([
         {
           user_id: userId,
-          total_points: newTotal
+          total_points: newTotal,
+          // 保留原有的最后签到日期和连续签到天数
+          last_checkin: currentPoints.lastCheckin,
+          checkin_streak: currentPoints.checkinStreak
         }
-      ]);
+      ], { onConflict: 'user_id' });
     
     if (updateError) {
       console.error('更新用户积分失败:', updateError);
@@ -396,7 +405,7 @@ export async function userCheckin(userId: string): Promise<{success: boolean, po
     const streakBonus = Math.min(newStreak - 1, 10); // 最多+10分
     const pointsEarned = basePoints + streakBonus;
     
-    // 更新签到信息
+    // 更新签到信息，明确指定冲突键以防止创建多条记录
     const { error: updateError } = await supabaseAdmin
       .from('user_points')
       .upsert([
@@ -406,7 +415,7 @@ export async function userCheckin(userId: string): Promise<{success: boolean, po
           last_checkin: now.toISOString(),
           checkin_streak: newStreak
         }
-      ]);
+      ], { onConflict: 'user_id' });
     
     if (updateError) {
       console.error('更新签到信息失败:', updateError);
