@@ -8,6 +8,19 @@ import { Achievement } from "@/types/memory";
 // 内存存储，用于Vercel环境
 const inMemoryAchievements: Record<string, Achievement[]> = {};
 
+// 降级策略：使用完全内存存储的方式
+function getOrCreateUserAchievements(userId: string, locale: string = 'zh'): Achievement[] {
+  // 如果已存在，直接返回
+  if (inMemoryAchievements[userId]) {
+    return inMemoryAchievements[userId];
+  }
+  
+  // 否则创建新的
+  const achievements = getLocalizedAchievements(locale);
+  inMemoryAchievements[userId] = achievements;
+  return achievements;
+}
+
 // 成就存储目录
 const ACHIEVEMENT_DIR = join(process.cwd(), "data", "achievements");
 
@@ -308,6 +321,45 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const locale = url.searchParams.get('locale') || 'zh';
     
+    // 检查是否强制使用内存存储（Vercel环境）
+    const forceInMemory = process.env.VERCEL_ENV === 'production' || url.searchParams.has('forceMemory');
+    
+    // 如果是Vercel环境或明确要求强制使用内存，使用纯内存模式
+    if (forceInMemory) {
+      console.log("使用纯内存模式处理成就数据");
+      
+      // 获取或创建用户成就
+      let achievements = getOrCreateUserAchievements(userId, locale);
+      
+      // 检查是否需要更新成就的语言
+      if (url.searchParams.has('updateLocale')) {
+        const localizedAchievements = getLocalizedAchievements(locale);
+        
+        // 保留原有的解锁状态和进度，仅更新文本
+        achievements = achievements.map((achievement: Achievement, index: number) => {
+          if (index < localizedAchievements.length) {
+            return {
+              ...localizedAchievements[index],
+              unlocked: achievement.unlocked,
+              progress: achievement.progress,
+              dateUnlocked: achievement.dateUnlocked
+            };
+          }
+          return achievement;
+        });
+        
+        // 更新内存存储
+        inMemoryAchievements[userId] = achievements;
+      }
+      
+      return NextResponse.json({ 
+        achievements,
+        source: "memory",
+        env: process.env.VERCEL_ENV || 'local'
+      });
+    }
+    
+    // 如果不强制使用内存，尝试使用文件系统
     // 用户成就路径
     const userDir = await ensureDirectoryExists(join(ACHIEVEMENT_DIR, userId));
     const achievementsPath = join(userDir, "achievements.json");
@@ -375,7 +427,14 @@ export async function GET(request: NextRequest) {
     
   } catch (error) {
     console.error("获取成就错误:", error);
-    return NextResponse.json({ error: "获取成就失败" }, { status: 500 });
+    // 提供更详细的错误信息，帮助调试
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ 
+      error: "获取成就失败", 
+      details: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined,
+      vercelEnv: process.env.VERCEL_ENV || 'local'
+    }, { status: 500 });
   }
 }
 
