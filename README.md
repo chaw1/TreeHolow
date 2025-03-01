@@ -13,20 +13,66 @@ TreeHolow is a digital sanctuary platform designed to provide users with a safe 
 
 ## Tech Stack
 
-### Local Mode
-- 🦙 AI Models: Supports [Ollama](https://github.com/jmorganca/ollama), [OpenAI](https://openai.com/), or [Replicate](https://replicate.com/)
-- 🔔 State Management: [Inngest](https://www.inngest.com/)
-- 💻 Database: [Supabase](https://supabase.com/) with pgvector for embeddings
-- 🧠 LLM Orchestration: [LangChain](https://js.langchain.com/docs/)
-- 🖼️ Frontend: [Next.js](https://nextjs.org/) with TypeScript
-- 🎨 UI: [Tailwind CSS](https://tailwindcss.com/) with [ShadcnUI](https://ui.shadcn.com/)
-- 🌍 3D Visualization: [Three.js](https://threejs.org/) with React Three Fiber
+- 🔐 **Authentication**: [Clerk](https://clerk.com/)
+- 💻 **Database & Storage**: [Supabase](https://supabase.com/)
+- 🖼️ **Frontend**: [Next.js](https://nextjs.org/) with TypeScript
+- 🎨 **UI**: [Tailwind CSS](https://tailwindcss.com/) with [ShadcnUI](https://ui.shadcn.com/)
+- 🌍 **3D Visualization**: [Three.js](https://threejs.org/) with React Three Fiber
+- ☁️ **Hosting**: [Vercel](https://vercel.com/)
 
-### Production Mode
-All of the above, plus:
-- 🔐 Authentication: [Clerk](https://clerk.com/)
-- ☁️ Hosting: [Fly.io](https://fly.io/)
-- 🧮 Rate Limiting: [Upstash](https://upstash.com/)
+## Database Structure
+
+### Memories (记忆)
+```
+memories
+  id: UUID (PK)
+  user_id: TEXT
+  transcript: TEXT
+  ai_response: TEXT
+  audio_url: TEXT
+  emotion_score: INTEGER
+  created_at: TIMESTAMPTZ
+  updated_at: TIMESTAMPTZ
+```
+
+### Achievements (成就)
+```
+user_achievements
+  id: UUID (PK)
+  user_id: TEXT
+  achievement_id: TEXT
+  title: TEXT
+  description: TEXT
+  icon: TEXT
+  condition: TEXT
+  category: TEXT
+  points: INTEGER
+  unlocked: BOOLEAN
+  progress: INTEGER
+  date_unlocked: TIMESTAMPTZ
+  created_at: TIMESTAMPTZ
+  updated_at: TIMESTAMPTZ
+```
+
+### Points (积分)
+```
+user_points
+  id: UUID (PK)
+  user_id: TEXT
+  total_points: INTEGER
+  last_checkin: TIMESTAMPTZ
+  checkin_streak: INTEGER
+  updated_at: TIMESTAMPTZ
+
+points_history
+  id: UUID (PK)
+  user_id: TEXT
+  points: INTEGER
+  source: TEXT
+  source_id: TEXT
+  description: TEXT
+  created_at: TIMESTAMPTZ
+```
 
 ## Getting Started
 
