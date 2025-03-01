@@ -155,17 +155,19 @@ export default function DiariesPage() {
       }
     }
     
+    const isSelected = selectedDay && dateString === format(selectedDay, 'yyyy-MM-dd');
+    
     return (
-      <div className="relative w-full h-full flex items-center justify-center">
+      <div className={`relative w-7 h-7 flex items-center justify-center rounded-full 
+                      ${isSelected ? 'ring-2 ring-indigo-500 dark:ring-indigo-400' : ''}`}>
         {count > 0 && (
           <div className={`absolute inset-0 rounded-full ${moodColors[mood]} opacity-50`}></div>
         )}
-        <span className={`relative z-10 ${selectedDay && dateString === format(selectedDay, 'yyyy-MM-dd') ? 'font-bold' : ''}`}>
+        <span className={`relative z-10 ${isSelected ? 'font-bold' : ''}`}>
           {day.date.getDate()}
         </span>
         {count > 0 && (
-          <span className="absolute bottom-0 right-0 flex h-2 w-2 items-center justify-center">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75 animate-ping"></span>
+          <span className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 flex h-2 w-2 items-center justify-center">
             <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
           </span>
         )}
@@ -230,7 +232,9 @@ export default function DiariesPage() {
               onSelect={handleDaySelect}
               onMonthChange={setCurrentMonth}
               locale={getDateLocale()}
-              className="w-full"
+              className="w-full mx-auto"
+              showOutsideDays={true}
+              fixedWeeks={true}
               components={{
                 Day: renderDay
               }}
