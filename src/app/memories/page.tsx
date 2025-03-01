@@ -169,21 +169,65 @@ export default function MemoriesPage() {
                         console.error("音频加载失败:", e);
                         const audioElem = e.currentTarget as HTMLAudioElement;
                         
-                        // 尝试直接构建Supabase URL
-                        if (!audioElem.src.includes('?') && memory.audioUrl) {
+                        // 尝试不同的备用URL获取方式
+                        if (memory.audioUrl) {
                           // 解析音频文件名
                           const audioUrl = memory.audioUrl || '';
                           const urlParts = audioUrl.split('/');
                           const fileName = urlParts.length > 0 ? urlParts[urlParts.length - 1] : 'audio.webm';
                           const userId = urlParts.length > 1 ? urlParts[urlParts.length - 2] : 'user_id';
                           
-                          // 获取Supabase URL (从环境变量或回退到固定地址)
-                          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yrxaptqcmatxtabjctfw.supabase.co';
+                          // 优先使用专门的signed-url端点
+                          fetch(`/api/audio/signed-url?path=${encodeURIComponent(`${userId}/${fileName}`)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                              if (data.url) {
+                                audioElem.src = data.url;
+                                console.log("使用signed-url端点的签名URL:", data.url);
+                              } else {
+                                console.error("无法从专用端点获取签名URL:", data.error);
+                                
+                                // 回退到旧的签名URL方法
+                                fetch(`/api/audio?signed=${encodeURIComponent(`${userId}/${fileName}`)}`)
+                                  .then(response => response.json())
+                                  .then(data => {
+                                    if (data.url) {
+                                      audioElem.src = data.url;
+                                      console.log("使用旧的签名URL:", data.url);
+                                    } else {
+                                      console.error("无法获取签名URL:", data.error);
+                                      
+                                      // 如果签名URL都失败，尝试直接通过API获取音频
+                                      audioElem.src = `/api/audio?path=${encodeURIComponent(`${userId}/${fileName}`)}`;
+                                      console.log("回退到直接API获取:", audioElem.src);
+                                    }
+                                  })
+                                  .catch(error => {
+                                    console.error("获取签名URL失败:", error);
+                                    audioElem.src = `/api/audio?path=${encodeURIComponent(`${userId}/${fileName}`)}`;
+                                  });
+                              }
+                            })
+                            .catch(error => {
+                              console.error("获取专用签名URL失败:", error);
+                              
+                              // 回退到旧方法
+                              fetch(`/api/audio?signed=${encodeURIComponent(`${userId}/${fileName}`)}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                  if (data.url) {
+                                    audioElem.src = data.url;
+                                  } else {
+                                    audioElem.src = `/api/audio?path=${encodeURIComponent(`${userId}/${fileName}`)}`;
+                                  }
+                                })
+                                .catch(() => {
+                                  // 最后的回退
+                                  audioElem.src = `/api/audio?path=${encodeURIComponent(`${userId}/${fileName}`)}`;
+                                });
+                            });
                           
-                          // 直接构建公共URL作为备用 - 使用Supabase公共存储URL
-                          audioElem.src = `${supabaseUrl}/storage/v1/object/public/audio-memories/${userId}/${fileName}?download=true`;
-                          
-                          console.log("尝试使用备用URL:", audioElem.src);
+                          console.log("尝试使用备用URL流程");
                         }
                       }}
                     />
