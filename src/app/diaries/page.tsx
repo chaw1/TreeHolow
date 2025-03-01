@@ -141,7 +141,7 @@ export default function DiariesPage() {
   // 自定义渲染日期函数
   const renderDay = (props: any) => {
     const { day } = props;
-    if (!day) return <div></div>;
+    if (!day) return <td></td>;
     
     const dateString = format(day.date, 'yyyy-MM-dd');
     const count = diaryDates[dateString] || 0;
@@ -158,20 +158,22 @@ export default function DiariesPage() {
     const isSelected = selectedDay && dateString === format(selectedDay, 'yyyy-MM-dd');
     
     return (
-      <div className={`relative w-7 h-7 flex items-center justify-center rounded-full 
+      <td className="p-0 text-center">
+        <div className={`relative mx-auto w-7 h-7 flex items-center justify-center rounded-full 
                       ${isSelected ? 'ring-2 ring-indigo-500 dark:ring-indigo-400' : ''}`}>
-        {count > 0 && (
-          <div className={`absolute inset-0 rounded-full ${moodColors[mood]} opacity-50`}></div>
-        )}
-        <span className={`relative z-10 ${isSelected ? 'font-bold' : ''}`}>
-          {day.date.getDate()}
-        </span>
-        {count > 0 && (
-          <span className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 flex h-2 w-2 items-center justify-center">
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+          {count > 0 && (
+            <div className={`absolute inset-0 rounded-full ${moodColors[mood]} opacity-50`}></div>
+          )}
+          <span className={`relative z-10 ${isSelected ? 'font-bold' : ''}`}>
+            {day.date.getDate()}
           </span>
-        )}
-      </div>
+          {count > 0 && (
+            <span className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 flex h-2 w-2 items-center justify-center">
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            </span>
+          )}
+        </div>
+      </td>
     );
   };
   
