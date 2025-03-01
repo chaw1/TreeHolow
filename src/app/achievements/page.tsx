@@ -60,18 +60,49 @@ export default function AchievementsPage() {
   
   // 处理签到
   const handleCheckIn = async () => {
-    if (isCheckedInToday || !user) return;
+    if (isCheckedInToday || !user || loading) return;
+    
+    // 立即设置本地状态为处理中，防止重复点击
+    setLoading(true);
     
     try {
+      // 在开始签到前，再次检查是否已签到，避免刷新页面导致状态重置
+      const checkStatusRes = await fetch('/api/points');
+      const pointsData = await checkStatusRes.json();
+      
+      // 检查今日是否已签到
+      const today = new Date().toISOString().split('T')[0];
+      let alreadyCheckedIn = false;
+      
+      if (pointsData.lastCheckin) {
+        const lastCheckInDate = new Date(pointsData.lastCheckin).toISOString().split('T')[0];
+        alreadyCheckedIn = today === lastCheckInDate;
+      }
+      
+      // 如果已经签到过，更新本地状态并退出
+      if (alreadyCheckedIn) {
+        setIsCheckedInToday(true);
+        setCheckInMessage(t.achievements.checkIn.alreadyDone);
+        setShowMessage(true);
+        setTimeout(() => setShowMessage(false), 3000);
+        setLoading(false);
+        return;
+      }
+      
+      // 继续签到流程
       const response = await fetch(`/api/points?locale=${currentLocale}`, {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       });
       
       const data = await response.json();
       
       if (data.success) {
-        setPoints(data.points);
-        setCheckInStreak(data.checkInStreak);
+        setPoints(prev => prev + data.points);
+        setCheckInStreak(data.streak);
         setLastCheckIn(new Date().toISOString());
         setIsCheckedInToday(true);
         setCheckInMessage(data.message);
@@ -81,9 +112,19 @@ export default function AchievementsPage() {
         setTimeout(() => {
           setShowMessage(false);
         }, 3000);
+      } else {
+        // 签到失败（可能是已经签到过）
+        setCheckInMessage(data.message || t.achievements.checkIn.failed);
+        setShowMessage(true);
+        setTimeout(() => setShowMessage(false), 3000);
       }
     } catch (error) {
       console.error('签到失败:', error);
+      setCheckInMessage(t.achievements.checkIn.error);
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+    } finally {
+      setLoading(false);
     }
   };
   
