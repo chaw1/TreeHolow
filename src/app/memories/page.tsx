@@ -165,8 +165,7 @@ export default function MemoriesPage() {
                       src={memory.audioUrl} 
                       className="w-full mb-4" 
                       onError={(e) => {
-                        // 捕获错误时尝试不同路径格式
-                        console.error("音频加载失败:", e);
+                        // 获取音频元素
                         const audioElem = e.currentTarget as HTMLAudioElement;
                         
                         // 尝试不同的备用URL获取方式
@@ -177,40 +176,30 @@ export default function MemoriesPage() {
                           const fileName = urlParts.length > 0 ? urlParts[urlParts.length - 1] : 'audio.webm';
                           const userId = urlParts.length > 1 ? urlParts[urlParts.length - 2] : 'user_id';
                           
-                          // 优先使用专门的signed-url端点
+                          // 尝试获取签名URL
                           fetch(`/api/audio/signed-url?path=${encodeURIComponent(`${userId}/${fileName}`)}`)
                             .then(response => response.json())
                             .then(data => {
                               if (data.url) {
                                 audioElem.src = data.url;
-                                console.log("使用signed-url端点的签名URL:", data.url);
                               } else {
-                                console.error("无法从专用端点获取签名URL:", data.error);
-                                
                                 // 回退到旧的签名URL方法
                                 fetch(`/api/audio?signed=${encodeURIComponent(`${userId}/${fileName}`)}`)
                                   .then(response => response.json())
                                   .then(data => {
                                     if (data.url) {
                                       audioElem.src = data.url;
-                                      console.log("使用旧的签名URL:", data.url);
                                     } else {
-                                      console.error("无法获取签名URL:", data.error);
-                                      
                                       // 如果签名URL都失败，尝试直接通过API获取音频
                                       audioElem.src = `/api/audio?path=${encodeURIComponent(`${userId}/${fileName}`)}`;
-                                      console.log("回退到直接API获取:", audioElem.src);
                                     }
                                   })
-                                  .catch(error => {
-                                    console.error("获取签名URL失败:", error);
+                                  .catch(() => {
                                     audioElem.src = `/api/audio?path=${encodeURIComponent(`${userId}/${fileName}`)}`;
                                   });
                               }
                             })
-                            .catch(error => {
-                              console.error("获取专用签名URL失败:", error);
-                              
+                            .catch(() => {
                               // 回退到旧方法
                               fetch(`/api/audio?signed=${encodeURIComponent(`${userId}/${fileName}`)}`)
                                 .then(response => response.json())
@@ -226,8 +215,6 @@ export default function MemoriesPage() {
                                   audioElem.src = `/api/audio?path=${encodeURIComponent(`${userId}/${fileName}`)}`;
                                 });
                             });
-                          
-                          console.log("尝试使用备用URL流程");
                         }
                       }}
                     />
