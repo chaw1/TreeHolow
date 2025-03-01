@@ -36,6 +36,7 @@ export interface Stats {
 // 数据库返回的原始数据类型
 export interface DBMemory {
   id: string;
+  user_id: string;  // 添加用户ID字段
   transcript: string;
   ai_response: string;
   created_at: string;

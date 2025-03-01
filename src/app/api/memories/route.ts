@@ -37,7 +37,9 @@ async function transformMemory(memory: DBMemory): Promise<Memory> {
     
     // 确保包含用户ID路径
     if (!filePath.includes('/')) {
-      filePath = `${memory.user_id}/${filePath}`;
+      // 使用类型保护，确保user_id存在
+      const userId = memory.user_id || (memory as any).userId || 'unknown_user';
+      filePath = `${userId}/${filePath}`;
     }
     
     console.log("处理后的音频文件路径:", filePath);
