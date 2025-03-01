@@ -64,7 +64,7 @@ export default function DiaryDetailPage({ params }: { params: { id: string } }) 
   };
   const router = useRouter();
   const { userId, isLoaded } = useAuth();
-  const { currentLocale } = useLanguage();
+  const { currentLocale, t } = useLanguage();
   const [diary, setDiary] = useState<Diary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

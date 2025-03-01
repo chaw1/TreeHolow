@@ -163,8 +163,8 @@ export default function NewDiaryPage() {
     <div className="container mx-auto px-4 py-8 pt-24">
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">新建日记</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">记录下此刻的心情与感悟</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t.diaries.new}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">{t.diaries.subtitle}</p>
         </div>
         
         {error && (
@@ -177,14 +177,14 @@ export default function NewDiaryPage() {
           {/* 日记标题 */}
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              标题
+              {t.diaries.form.title}
             </label>
             <input
               type="text"
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="今天的标题"
+              placeholder={t.diaries.form.titlePlaceholder}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800"
               required
             />
@@ -193,7 +193,7 @@ export default function NewDiaryPage() {
           {/* 心情选择 */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              今天的心情
+              {t.diaries.form.mood}
             </label>
             <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-300 dark:border-gray-700">
               <input
