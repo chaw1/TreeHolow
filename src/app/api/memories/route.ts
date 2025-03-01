@@ -21,7 +21,10 @@ async function transformMemory(memory: DBMemory): Promise<Memory> {
         .from('audio-memories')
         .createSignedUrl(audioUrl, 3600);
 
-      audioUrl = data?.signedUrl || null;
+      // 确保类型兼容性，如果没有signedUrl则保持原有URL
+      if (data?.signedUrl) {
+        audioUrl = data.signedUrl;
+      }
     } catch(err) {
       console.error("获取签名URL失败:", err);
       // 如果无法获取签名URL，回退到公共URL
