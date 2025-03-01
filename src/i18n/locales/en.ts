@@ -139,7 +139,10 @@ export const en = {
       button: "Check in Now",
       done: "Already Checked in Today",
       tomorrow: "Come back tomorrow for more points!",
-      consecutive: "Consecutive check-ins earn more bonus points!"
+      consecutive: "Consecutive check-ins earn more bonus points!",
+      alreadyDone: "You've already checked in today",
+      failed: "Check-in failed, please try again later",
+      error: "An error occurred, please try again later"
     },
     categories: {
       interaction: "Interaction Achievements",

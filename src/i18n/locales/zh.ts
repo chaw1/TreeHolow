@@ -139,7 +139,10 @@ export const zh = {
       button: "立即签到",
       done: "今日已签到",
       tomorrow: "明天再来签到获取更多积分吧!",
-      consecutive: "连续签到可获得更多积分奖励!"
+      consecutive: "连续签到可获得更多积分奖励!",
+      alreadyDone: "你今天已经签到过了",
+      failed: "签到失败，请稍后再试",
+      error: "出错了，请稍后再试"
     },
     categories: {
       interaction: "互动成就",
