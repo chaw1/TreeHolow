@@ -170,11 +170,12 @@ export default function MemoriesPage() {
                         const audioElem = e.currentTarget as HTMLAudioElement;
                         
                         // 尝试直接构建Supabase URL
-                        if (!audioElem.src.includes('?')) {
+                        if (!audioElem.src.includes('?') && memory.audioUrl) {
                           // 解析音频文件名
-                          const urlParts = memory.audioUrl.split('/');
-                          const fileName = urlParts[urlParts.length - 1];
-                          const userId = urlParts[urlParts.length - 2] || 'user_id';
+                          const audioUrl = memory.audioUrl || '';
+                          const urlParts = audioUrl.split('/');
+                          const fileName = urlParts.length > 0 ? urlParts[urlParts.length - 1] : 'audio.webm';
+                          const userId = urlParts.length > 1 ? urlParts[urlParts.length - 2] : 'user_id';
                           
                           // 直接构建公共URL作为备用
                           audioElem.src = `${window.location.origin}/audio/${userId}/${fileName}`;
