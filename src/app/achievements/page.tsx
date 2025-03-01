@@ -26,6 +26,19 @@ export default function AchievementsPage() {
       
       setLoading(true);
       try {
+        // 首先检查localStorage中是否有今日签到记录
+        try {
+          const today = new Date().toISOString().split('T')[0];
+          const storedDate = localStorage.getItem('lastCheckinDate');
+          if (storedDate && storedDate === today) {
+            // 如果本地存储表明今天已签到，先设置状态
+            setIsCheckedInToday(true);
+            console.log('从localStorage检测到今日已签到');
+          }
+        } catch (e) {
+          console.error('读取localStorage失败', e);
+        }
+        
         // 获取成就（带上语言参数）
         const achievementsRes = await fetch(`/api/achievements?locale=${currentLocale}&updateLocale=true`);
         const achievementsData = await achievementsRes.json();
@@ -34,19 +47,37 @@ export default function AchievementsPage() {
           setAchievements(achievementsData.achievements);
         }
         
-        // 获取积分
-        const pointsRes = await fetch('/api/points');
+        // 获取积分 - 使用时间戳参数避免缓存
+        const timestamp = new Date().getTime();
+        const pointsRes = await fetch(`/api/points?t=${timestamp}`, {
+          headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
+          cache: 'no-store'
+        });
         const pointsData = await pointsRes.json();
         
-        setPoints(pointsData.total || 0);
-        setCheckInStreak(pointsData.checkInStreak || 0);
-        setLastCheckIn(pointsData.lastCheckIn);
+        console.log('加载积分数据:', pointsData);
+        
+        // 确保使用正确的字段名
+        setPoints(pointsData.totalPoints || 0);
+        setCheckInStreak(pointsData.checkinStreak || 0);
+        setLastCheckIn(pointsData.lastCheckin);
         
         // 检查今日是否已签到
-        if (pointsData.lastCheckIn) {
+        if (pointsData.lastCheckin) {
           const today = new Date().toISOString().split('T')[0];
-          const lastCheckInDate = new Date(pointsData.lastCheckIn).toISOString().split('T')[0];
-          setIsCheckedInToday(today === lastCheckInDate);
+          const lastCheckInDate = new Date(pointsData.lastCheckin).toISOString().split('T')[0];
+          const isCheckedIn = today === lastCheckInDate;
+          setIsCheckedInToday(isCheckedIn);
+          console.log(`检查签到状态: ${isCheckedIn ? '今日已签到' : '今日未签到'}`);
+          
+          // 更新localStorage
+          if (isCheckedIn) {
+            try {
+              localStorage.setItem('lastCheckinDate', today);
+            } catch (e) {
+              console.error('无法保存到localStorage', e);
+            }
+          }
         }
       } catch (error) {
         console.error('加载数据失败:', error);
@@ -67,8 +98,13 @@ export default function AchievementsPage() {
     
     try {
       // 在开始签到前，再次检查是否已签到，避免刷新页面导致状态重置
-      const checkStatusRes = await fetch('/api/points');
+      const checkStatusRes = await fetch('/api/points', {
+        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
+        next: { revalidate: 0 } // 确保每次都获取最新数据
+      });
       const pointsData = await checkStatusRes.json();
+      
+      console.log('签到前检查当前积分状态:', pointsData);
       
       // 检查今日是否已签到
       const today = new Date().toISOString().split('T')[0];
@@ -77,6 +113,7 @@ export default function AchievementsPage() {
       if (pointsData.lastCheckin) {
         const lastCheckInDate = new Date(pointsData.lastCheckin).toISOString().split('T')[0];
         alreadyCheckedIn = today === lastCheckInDate;
+        console.log(`再次检查签到状态: 今天=${today}, 上次签到=${lastCheckInDate}, 结果=${alreadyCheckedIn ? '已签到' : '未签到'}`);
       }
       
       // 如果已经签到过，更新本地状态并退出
@@ -100,7 +137,10 @@ export default function AchievementsPage() {
       
       const data = await response.json();
       
+      console.log('签到响应:', data);
+      
       if (data.success) {
+        // 成功签到，更新本地状态
         setPoints(prev => prev + data.points);
         setCheckInStreak(data.streak);
         setLastCheckIn(new Date().toISOString());
@@ -108,12 +148,24 @@ export default function AchievementsPage() {
         setCheckInMessage(data.message);
         setShowMessage(true);
         
+        // 保存签到状态到localStorage作为额外防护
+        try {
+          localStorage.setItem('lastCheckinDate', new Date().toISOString().split('T')[0]);
+        } catch (e) {
+          console.error('无法保存到localStorage', e);
+        }
+        
         // 3秒后隐藏消息
         setTimeout(() => {
           setShowMessage(false);
         }, 3000);
       } else {
         // 签到失败（可能是已经签到过）
+        if (data.streak) {
+          // 如果返回了streak，说明用户已有记录，更新本地状态
+          setCheckInStreak(data.streak);
+        }
+        setIsCheckedInToday(true); // 设置为已签到状态，防止重复尝试
         setCheckInMessage(data.message || t.achievements.checkIn.failed);
         setShowMessage(true);
         setTimeout(() => setShowMessage(false), 3000);
