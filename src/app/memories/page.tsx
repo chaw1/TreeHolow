@@ -159,11 +159,29 @@ export default function MemoriesPage() {
                 </div>
 
                 {memory.audioUrl && (
-                  <audio 
-                    controls 
-                    src={memory.audioUrl} 
-                    className="w-full mb-4" 
-                  />
+                  <div>
+                    <audio 
+                      controls 
+                      src={memory.audioUrl} 
+                      className="w-full mb-4" 
+                      onError={(e) => {
+                        // 捕获错误时尝试不同路径格式
+                        console.error("音频加载失败:", e);
+                        const audioElem = e.currentTarget as HTMLAudioElement;
+                        
+                        // 尝试直接构建Supabase URL
+                        if (!audioElem.src.includes('?')) {
+                          // 解析音频文件名
+                          const urlParts = memory.audioUrl.split('/');
+                          const fileName = urlParts[urlParts.length - 1];
+                          const userId = urlParts[urlParts.length - 2] || 'user_id';
+                          
+                          // 直接构建公共URL作为备用
+                          audioElem.src = `${window.location.origin}/audio/${userId}/${fileName}`;
+                        }
+                      }}
+                    />
+                  </div>
                 )}
 
                 <div className="space-y-4">

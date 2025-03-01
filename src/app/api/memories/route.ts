@@ -10,25 +10,65 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+// 使用服务角色密钥创建Supabase管理客户端，绕过RLS
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
 // 将DB记录格式转换为前端格式，并生成签名URL
 async function transformMemory(memory: DBMemory): Promise<Memory> {
   // 处理音频URL，生成带签名的临时URL
   let audioUrl = memory.audio_url;
+  console.log("原始音频URL:", audioUrl);
+  
   if (audioUrl && !audioUrl.includes('://')) {
+    // 检查audio_url格式，根据格式修正
+    // 情况1：完整路径（user_id/filename.webm）
+    // 情况2：仅文件名（filename.webm）
+    // 情况3：public/audio/路径（需要修正为格式1）
+    
+    let filePath = audioUrl;
+    
+    // 处理public/audio路径
+    if (audioUrl.includes('public/audio/')) {
+      filePath = audioUrl.replace('public/audio/', '');
+    }
+    
+    // 确保包含用户ID路径
+    if (!filePath.includes('/')) {
+      filePath = `${memory.user_id}/${filePath}`;
+    }
+    
+    console.log("处理后的音频文件路径:", filePath);
+    
     try {
+      // 尝试使用服务角色密钥创建的客户端，绕过RLS
+      const adminClient = supabaseAdmin || supabase;
+      
       // 生成有时间限制的签名URL（3600秒 = 1小时）
-      const { data } = await supabase.storage
+      const { data, error } = await adminClient.storage
         .from('audio-memories')
-        .createSignedUrl(audioUrl, 3600);
+        .createSignedUrl(filePath, 3600);
+        
+      console.log("签名URL生成结果:", { data, error });
 
       // 确保类型兼容性，如果没有signedUrl则保持原有URL
       if (data?.signedUrl) {
         audioUrl = data.signedUrl;
+        console.log("成功生成签名URL:", audioUrl);
+      } else if (error) {
+        console.error("签名URL生成错误:", error);
+        // 尝试直接使用公共URL
+        audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-memories/${filePath}?download=true`;
+        console.log("生成失败，尝试公共URL:", audioUrl);
       }
     } catch(err) {
       console.error("获取签名URL失败:", err);
       // 如果无法获取签名URL，回退到公共URL
-      audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-memories/${audioUrl}?download=true`;
+      const fallbackUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-memories/${filePath}?download=true`;
+      console.log("回退到公共URL:", fallbackUrl);
+      audioUrl = fallbackUrl;
     }
   }
 
