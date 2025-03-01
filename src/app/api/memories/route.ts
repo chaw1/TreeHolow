@@ -30,9 +30,11 @@ async function transformMemory(memory: DBMemory): Promise<Memory> {
     
     let filePath = audioUrl;
     
-    // 处理public/audio路径
+    // 处理各种可能的路径格式
     if (audioUrl.includes('public/audio/')) {
       filePath = audioUrl.replace('public/audio/', '');
+    } else if (audioUrl.startsWith('/audio/')) {
+      filePath = audioUrl.replace('/audio/', '');
     }
     
     // 确保包含用户ID路径

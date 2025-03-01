@@ -177,8 +177,13 @@ export default function MemoriesPage() {
                           const fileName = urlParts.length > 0 ? urlParts[urlParts.length - 1] : 'audio.webm';
                           const userId = urlParts.length > 1 ? urlParts[urlParts.length - 2] : 'user_id';
                           
-                          // 直接构建公共URL作为备用
-                          audioElem.src = `${window.location.origin}/audio/${userId}/${fileName}`;
+                          // 获取Supabase URL (从环境变量或回退到固定地址)
+                          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://yrxaptqcmatxtabjctfw.supabase.co';
+                          
+                          // 直接构建公共URL作为备用 - 使用Supabase公共存储URL
+                          audioElem.src = `${supabaseUrl}/storage/v1/object/public/audio-memories/${userId}/${fileName}?download=true`;
+                          
+                          console.log("尝试使用备用URL:", audioElem.src);
                         }
                       }}
                     />
