@@ -267,15 +267,30 @@ export async function getUserPoints(userId: string): Promise<{totalPoints: numbe
     
     // 如果没有记录，创建新的
     if (error || !points || points.length === 0) {
+      // 先检查是否真的不存在，然后再插入
+      const checkAgain = await supabaseAdmin
+        .from('user_points')
+        .select('*')
+        .eq('user_id', userId);
+      
+      // 如果已存在，直接返回
+      if (checkAgain.data && checkAgain.data.length > 0) {
+        return {
+          totalPoints: checkAgain.data[0].total_points,
+          lastCheckin: checkAgain.data[0].last_checkin,
+          checkinStreak: checkAgain.data[0].checkin_streak
+        };
+      }
+      
+      // 确认不存在后，执行插入操作
       const { data: newPoints, error: insertError } = await supabaseAdmin
         .from('user_points')
-        .upsert([{ 
+        .insert([{ 
           user_id: userId, 
           total_points: 0, 
           checkin_streak: 0,
-          // 确保创建时不会有null值导致的问题
           last_checkin: null
-        }], { onConflict: 'user_id' })
+        }])
         .select()
         .single();
       
@@ -310,18 +325,14 @@ export async function addUserPoints(userId: string, points: number, source: stri
     const currentPoints = await getUserPoints(userId);
     const newTotal = currentPoints.totalPoints + points;
     
-    // 更新总积分 - 确保保留其他字段原有值
+    // 使用update而不是upsert来避免冲突问题
     const { error: updateError } = await supabaseAdmin
       .from('user_points')
-      .upsert([
-        {
-          user_id: userId,
-          total_points: newTotal,
-          // 保留原有的最后签到日期和连续签到天数
-          last_checkin: currentPoints.lastCheckin,
-          checkin_streak: currentPoints.checkinStreak
-        }
-      ], { onConflict: 'user_id' });
+      .update({
+        total_points: newTotal,
+        // 不需要设置这些字段，因为update只会更新指定的字段
+      })
+      .eq('user_id', userId);
     
     if (updateError) {
       console.error('更新用户积分失败:', updateError);
@@ -405,17 +416,15 @@ export async function userCheckin(userId: string): Promise<{success: boolean, po
     const streakBonus = Math.min(newStreak - 1, 10); // 最多+10分
     const pointsEarned = basePoints + streakBonus;
     
-    // 更新签到信息，明确指定冲突键以防止创建多条记录
+    // 使用update而不是upsert来避免冲突问题
     const { error: updateError } = await supabaseAdmin
       .from('user_points')
-      .upsert([
-        {
-          user_id: userId,
-          total_points: totalPoints + pointsEarned,
-          last_checkin: now.toISOString(),
-          checkin_streak: newStreak
-        }
-      ], { onConflict: 'user_id' });
+      .update({
+        total_points: totalPoints + pointsEarned,
+        last_checkin: now.toISOString(),
+        checkin_streak: newStreak
+      })
+      .eq('user_id', userId);
     
     if (updateError) {
       console.error('更新签到信息失败:', updateError);
