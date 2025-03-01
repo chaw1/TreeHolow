@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Achievement } from '@/types/memory';
+// 引入服务器端工具
 
 // 使用服务角色密钥创建Supabase客户端，绕过RLS
 export const supabaseAdmin = createClient(

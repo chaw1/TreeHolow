@@ -10,13 +10,23 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// 将DB记录格式转换为前端格式
-function transformMemory(memory: DBMemory): Memory {
-  // 处理音频URL，确保是完整的公共URL
+// 将DB记录格式转换为前端格式，并生成签名URL
+async function transformMemory(memory: DBMemory): Promise<Memory> {
+  // 处理音频URL，生成带签名的临时URL
   let audioUrl = memory.audio_url;
   if (audioUrl && !audioUrl.includes('://')) {
-    // 构建Supabase存储公共URL
-    audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-memories/${audioUrl}?download=true`;
+    try {
+      // 生成有时间限制的签名URL（3600秒 = 1小时）
+      const { data } = await supabase.storage
+        .from('audio-memories')
+        .createSignedUrl(audioUrl, 3600);
+
+      audioUrl = data?.signedUrl || null;
+    } catch(err) {
+      console.error("获取签名URL失败:", err);
+      // 如果无法获取签名URL，回退到公共URL
+      audioUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/audio-memories/${audioUrl}?download=true`;
+    }
   }
 
   return {
@@ -50,8 +60,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "获取记忆失败" }, { status: 500 });
     }
 
-    // 转换格式并返回
-    const memories = data.map(transformMemory);
+    // 转换格式并返回 - 注意这里需要等待Promise完成
+    const memoriesPromises = data.map(memory => transformMemory(memory));
+    const memories = await Promise.all(memoriesPromises);
 
     // 计算统计数据
     let totalWords = 0;
@@ -153,8 +164,8 @@ export async function POST(request: NextRequest) {
     const basePoints = 5;
     await addUserPoints(userId, basePoints, 'memory', data.id, `分享新记忆: ${transcript.slice(0, 20)}...`);
 
-    // 转换格式返回
-    const memory = transformMemory(data as DBMemory);
+    // 转换格式返回 - 注意这里需要等待Promise完成
+    const memory = await transformMemory(data as DBMemory);
 
     // 检查语音记忆成就
     if (audioUrl) {
